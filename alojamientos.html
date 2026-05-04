@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscador Premium — VeranoSummer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #1a2a6c; --blue-booking: #006ce4; --text-main: #1a1a1a; --text-sub: #474747; --border: #e7e7e7; --booking-yellow: #febb02; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'DM Sans', sans-serif; overflow: hidden; background: #fff; }
+        
+        /* HEADER CON TÍTULO CENTRADO */
+        header { 
+            height: 70px; 
+            background: white; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 0 25px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+            z-index: 1000; 
+            position: relative; 
+        }
+        
+        /* Contenedor del título centrado */
+        .logo-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            width: auto;
+        }
+        .logo-center h1 { 
+            font-family: 'Fraunces', serif; 
+            margin: 0; 
+            font-size: 1.6rem; 
+            color: var(--primary); 
+            white-space: nowrap;
+        }
+
+        .back-nav { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--primary); font-weight: 700; z-index: 10; }
+        .back-nav:hover { color: var(--blue-booking); }
+
+        /* ÁLBUM / LIBRO ABIERTO (ENLACE A MIALBUM.HTML) */
+        .album-book { 
+            z-index: 10; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            text-align: center; 
+            text-decoration: none; /* Quita subrayado del enlace */
+            display: block;
+        }
+        .album-book:hover { transform: scale(1.1); }
+        .album-book span { display: block; font-size: 0.7rem; font-weight: 700; color: var(--primary); margin-top: -5px; }
+
+        .main-container { display: flex; height: calc(100vh - 70px); }
+
+        /* IZQUIERDA: OPCIONES */
+        .sidebar-left { width: 280px; border-right: 1px solid var(--border); padding: 25px; overflow-y: auto; background: #fff; }
+        .filter-group h4 { font-size: 0.95rem; margin-bottom: 15px; border-bottom: 2px solid var(--booking-yellow); display: inline-block; }
+        .check-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 0.9rem; cursor: pointer; }
+        .check-item input { width: 18px; height: 18px; accent-color: var(--blue-booking); }
+
+        /* CENTRO: RESULTADOS */
+        .results-panel { flex-grow: 1; overflow-y: auto; background: #f4f6f8; padding-bottom: 50px; }
+        .dest-banner { background: var(--primary); color: white; padding: 30px; text-align: center; }
+        
+        .card { background: white; margin: 20px auto; width: 90%; border-radius: 12px; display: flex; overflow: hidden; border: 1px solid var(--border); position: relative; }
+        .card-img { width: 250px; height: 180px; object-fit: cover; }
+        .card-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .save-btn { position: absolute; top: 15px; right: 15px; background: white; border: 1px solid #ddd; padding: 8px; border-radius: 50%; cursor: pointer; }
+
+        /* DERECHA: DISPONIBILIDAD */
+        .sidebar-right { width: 320px; background: var(--booking-yellow); padding: 25px; overflow-y: auto; }
+        .side-title { font-weight: 700; color: var(--primary); margin-bottom: 20px; display: block; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px; }
+        .select-box { margin-bottom: 20px; }
+        .select-box label { display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 5px; color: #555; }
+        .custom-select { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #ccc; font-family: inherit; }
+
+        .price-tag { font-size: 1.5rem; font-weight: 700; color: var(--text-main); margin-top: auto; text-align: right; }
+    </style>
+</head>
+<body>
+
+<header>
+    <!-- LADO IZQUIERDO: VOLVER -->
+    <a href="index.html" class="back-nav">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        VOLVER
+    </a>
+    
+    <!-- CENTRO: NOMBRE DESTINO -->
+    <div class="logo-center">
+        <h1 id="header-destino">Destino</h1>
+    </div>
+
+    <!-- LADO DERECHO: ÁLBUM (REDIRECCIÓN A MIALBUM.HTML) -->
+    <a href="mialbum.html" class="album-book" title="Ver mi álbum de viajes">
+        <svg width="35" height="35" viewBox="0 0 24 24" fill="var(--primary)">
+            <path d="M12 21l-8-2V5l8 2 8-2v14l-8 2zM12 7l-7-1.75v12.5L12 19.5V7zm1 12.5l7-1.75V5.25L13 7v12.5z"/>
+        </svg>
+        <span>MI ÁLBUM</span>
+    </a>
+</header>
+
+<div class="main-container">
+    <aside class="sidebar-left">
+        <div class="filter-group">
+            <h4>Tipo de Estancia</h4>
+            <label class="check-item"><input type="checkbox" class="f-check" value="Hotel" checked> Hoteles</label>
+            <label class="check-item"><input type="checkbox" class="f-check" value="Albergue" checked> Albergues</label>
+            <label class="check-item"><input type="checkbox" class="f-check" value="Apartamento" checked> Apartamentos</label>
+            <label class="check-item"><input type="checkbox" class="f-check" value="Villa" checked> Villas</label>
+        </div>
+        <hr>
+        <div class="filter-group">
+            <h4>Extras Necesarios</h4>
+            <label class="check-item"><input type="checkbox"> Piscina Privada</label>
+            <label class="check-item"><input type="checkbox"> WiFi Gratis</label>
+            <label class="check-item"><input type="checkbox"> Desayuno</label>
+        </div>
+    </aside>
+
+    <section class="results-panel">
+        <div class="dest-banner">
+            <h2>Disponibilidad en Tiempo Real</h2>
+            <p>Selecciona habitaciones y camas para actualizar precios en €.</p>
+        </div>
+        <div id="feed"></div>
+    </section>
+
+    <aside class="sidebar-right">
+        <span class="side-title">CONFIGURACIÓN</span>
+        
+        <div class="select-box">
+            <label>Nº DE HABITACIONES</label>
+            <select class="custom-select" id="sel-habs">
+                <option value="1">1 Habitación</option>
+                <option value="2">2 Habitaciones</option>
+                <option value="3">3 Habitaciones</option>
+                <option value="4">4 Habitaciones</option>
+                <option value="5">5 Habitaciones</option>
+            </select>
+        </div>
+
+        <div class="select-box">
+            <label>Nº DE CAMAS TOTALES</label>
+            <select class="custom-select" id="sel-camas">
+                <option value="1">1 Cama</option>
+                <option value="2">2 Camas</option>
+                <option value="3">3 Camas</option>
+                <option value="4">4 Camas</option>
+                <option value="5">5 Camas</option>
+                <option value="6">6 Camas</option>
+                <option value="8">8 Camas</option>
+            </select>
+        </div>
+
+        <button onclick="render()" style="width:100%; padding:15px; background:var(--primary); color:white; border:none; border-radius:8px; font-weight:700; cursor:pointer;">
+            ACTUALIZAR BUSQUEDA
+        </button>
+    </aside>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const destino = urlParams.get('destino') || "Madrid";
+    document.getElementById('header-destino').innerText = destino.toUpperCase();
+
+    const data = [
+        { nombre: "Grand Lux Hotel", tipo: "Hotel", precio: 120, img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500" },
+        { nombre: "Urban Loft City", tipo: "Apartamento", precio: 85, img: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500" },
+        { nombre: "Nomad Backpackers", tipo: "Albergue", precio: 25, img: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=500" },
+        { nombre: "Ocean Blue Villa", tipo: "Villa", precio: 450, img: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=500" }
+    ];
+
+    function render() {
+        const tiposActivos = Array.from(document.querySelectorAll('.f-check:checked')).map(i => i.value);
+        const habs = document.getElementById('sel-habs').value;
+        const camas = document.getElementById('sel-camas').value;
+        const feed = document.getElementById('feed');
+        feed.innerHTML = "";
+
+        data.filter(h => tiposActivos.includes(h.tipo)).forEach(h => {
+            const precioCalculado = (h.precio * habs) + (camas * 15);
+            feed.innerHTML += `
+                <div class="card">
+                    <button class="save-btn" onclick="this.innerHTML='❤️'; alert('Guardado en el libro de viajes');">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    </button>
+                    <img src="${h.img}" class="card-img">
+                    <div class="card-body">
+                        <span style="color:var(--blue-booking); font-weight:700; font-size:0.8rem;">${h.tipo}</span>
+                        <h3 style="margin:5px 0;">${h.nombre}</h3>
+                        <p style="font-size:0.85rem; color:gray;">Configurado para ${habs} hab. y ${camas} camas.</p>
+                        <div class="price-tag">${precioCalculado}€</div>
+                        <button style="margin-top:10px; padding:10px; background:var(--blue-booking); color:white; border:none; border-radius:5px; font-weight:700; cursor:pointer;">RESERVAR</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    document.querySelectorAll('.f-check').forEach(i => i.addEventListener('change', render));
+    render();
+</script>
+
+</body>
+</html>

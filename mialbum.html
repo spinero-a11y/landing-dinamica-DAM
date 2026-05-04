@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Álbum — VeranoSummer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #1a2a6c; --blue-booking: #006ce4; --gold: #febb02; --text: #1a1a1a; --paper: #fdfaf6; }
+        body, html { margin: 0; padding: 0; min-height: 100%; font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--text); }
+
+        /* HEADER */
+        header { 
+            height: 70px; background: white; display: flex; justify-content: space-between; 
+            align-items: center; padding: 0 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+        }
+        .back-btn { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--primary); font-weight: 700; }
+
+        /* SECCIÓN DE LOGIN */
+        #auth-section { 
+            max-width: 450px; margin: 60px auto; padding: 40px; background: white; 
+            border-radius: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); text-align: center;
+            border-left: 10px solid var(--primary);
+        }
+        .book-icon { font-size: 50px; margin-bottom: 20px; display: block; }
+        .input-field { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .btn-primary { 
+            width: 100%; padding: 15px; background: var(--primary); color: white; 
+            border: none; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 10px;
+        }
+
+        /* SECCIÓN DEL ÁLBUM */
+        #album-content { display: none; padding: 40px; max-width: 1100px; margin: 0 auto; }
+        .welcome-msg { font-family: 'Fraunces', serif; font-size: 2rem; color: var(--primary); margin-bottom: 30px; }
+        
+        .album-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
+        
+        /* TABS (FILTROS) */
+        .tabs { display: flex; gap: 20px; margin-bottom: 30px; border-bottom: 1px solid #ddd; }
+        .tab { 
+            padding: 10px 20px; cursor: pointer; font-weight: 700; color: #888; 
+            transition: 0.3s; border-bottom: 3px solid transparent; 
+        }
+        .tab.active { color: var(--primary); border-bottom: 3px solid var(--gold); }
+        .tab:hover { color: var(--primary); }
+
+        /* TARJETAS */
+        .travel-item { 
+            background: white; padding: 15px; border-radius: 5px; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05); transform: rotate(-1deg);
+            transition: 0.4s; display: block;
+        }
+        .travel-item:nth-child(even) { transform: rotate(1.5deg); }
+        .travel-item.hidden { display: none; }
+        .travel-item:hover { transform: rotate(0deg) scale(1.02); z-index: 5; }
+        
+        .travel-img { width: 100%; height: 200px; object-fit: cover; border-radius: 3px; margin-bottom: 15px; }
+        .status-tag { font-size: 0.7rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-bottom: 10px; }
+        .status-paid { background: #e6fcf5; color: #0ca678; }
+        .status-saved { background: #fff4e6; color: #f76707; }
+        .price { font-weight: 700; color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="alojamientos.html" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        VOLVER AL BUSCADOR
+    </a>
+    <div style="font-family: 'Fraunces', serif; font-size: 1.2rem;">Mi Álbum de Viajes</div>
+    <div id="user-display" style="font-weight: 700; color: var(--blue-booking); opacity: 0;">Hola, Aventurero</div>
+</header>
+
+<div id="auth-section">
+    <span class="book-icon">📖</span>
+    <h2 style="font-family: 'Fraunces', serif;">Abre tu Álbum Personal</h2>
+    <p style="color: #666; font-size: 0.9rem;">Inicia sesión para ver tus recuerdos.</p>
+    <input type="email" id="email" class="input-field" placeholder="Correo electrónico">
+    <input type="password" class="input-field" placeholder="Contraseña">
+    <button class="btn-primary" onclick="login()">ENTRAR AL ÁLBUM</button>
+    <p style="font-size: 0.8rem; margin-top: 20px;">
+        ¿Aún no tienes cuenta? <a href="registro.html" style="color: var(--blue-booking); font-weight: 700; text-decoration: none;">Regístrate aquí</a>
+    </p>
+</div>
+
+<div id="album-content">
+    <h1 class="welcome-msg">Mis Recuerdos y Reservas</h1>
+    
+    <!-- SISTEMA DE PESTAÑAS (FILTROS) -->
+    <div class="tabs">
+        <div class="tab active" onclick="filterAlbum('all', this)">TODOS</div>
+        <div class="tab" onclick="filterAlbum('compras', this)">MIS COMPRAS</div>
+        <div class="tab" onclick="filterAlbum('guardados', this)">GUARDADOS ❤️</div>
+    </div>
+
+    <div class="album-grid">
+        <!-- CATEGORÍA: COMPRAS -->
+        <div class="travel-item" data-category="compras">
+            <span class="status-tag status-paid">✓ RESERVADO</span>
+            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400" class="travel-img">
+            <div class="travel-info">
+                <h3>Grand Lux Hotel</h3>
+                <p>📍 Madrid, España</p>
+                <div class="price-row"><span class="price">640€</span></div>
+            </div>
+        </div>
+
+        <!-- CATEGORÍA: GUARDADOS -->
+        <div class="travel-item" data-category="guardados">
+            <span class="status-tag status-saved">❤️ GUARDADO</span>
+            <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400" class="travel-img">
+            <div class="travel-info">
+                <h3>Ocean Blue Villa</h3>
+                <p>📍 Ibiza, España</p>
+                <div class="price-row"><span class="price">450€/noche</span></div>
+            </div>
+        </div>
+
+        <!-- CATEGORÍA: COMPRAS -->
+        <div class="travel-item" data-category="compras">
+            <span class="status-tag status-paid">✓ RESERVADO</span>
+            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400" class="travel-img">
+            <div class="travel-info">
+                <h3>Urban Loft City</h3>
+                <p>📍 Barcelona, España</p>
+                <div class="price-row"><span class="price">380€</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function login() {
+        const email = document.getElementById('email').value;
+        if(email === "") {
+            alert("Por favor, introduce tu correo.");
+            return;
+        }
+        document.getElementById('auth-section').style.display = 'none';
+        document.getElementById('album-content').style.display = 'block';
+        const userDisplay = document.getElementById('user-display');
+        userDisplay.innerText = "Hola, " + email.split('@')[0];
+        userDisplay.style.opacity = '1';
+    }
+
+    // FUNCIÓN PARA FILTRAR EL ÁLBUM
+    function filterAlbum(category, element) {
+        // Actualizar estado visual de las pestañas
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        element.classList.add('active');
+
+        // Filtrar tarjetas
+        const items = document.querySelectorAll('.travel-item');
+        items.forEach(item => {
+            if (category === 'all') {
+                item.classList.remove('hidden');
+            } else {
+                if (item.getAttribute('data-category') === category) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

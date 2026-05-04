@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personaliza tu Reserva — VeranoSummer</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body { background: #fdfaf5; font-family: 'DM Sans', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+    
+    .final-form-card {
+      background: white;
+      padding: 50px;
+      border-radius: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      border-top: 8px solid var(--c-gold);
+    }
+
+    h1 { font-family: 'Fraunces', serif; color: var(--c-magic-blue); margin-bottom: 10px; }
+    .dest-highlight { color: var(--c-gold); font-size: 1.4rem; font-weight: bold; display: block; margin-bottom: 30px; }
+
+    .input-group { text-align: left; margin-bottom: 20px; }
+    .input-group label { display: block; font-weight: bold; margin-bottom: 8px; color: #555; }
+    .input-group input { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 12px; box-sizing: border-box; }
+
+    .btn-final {
+      background: var(--c-magic-blue);
+      color: white;
+      width: 100%;
+      padding: 20px;
+      border: none;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: transform 0.3s;
+    }
+    .btn-final:hover { transform: scale(1.02); background: #001a4d; }
+  </style>
+</head>
+<body>
+
+  <div class="final-form-card">
+    <small style="text-transform: uppercase; letter-spacing: 2px; color: #999;">Paso Final</small>
+    <h1>Casi está listo</h1>
+    <span id="display-destino" class="dest-highlight">Cargando destino...</span>
+
+    <form id="form-final" onsubmit="finalizarTodo(event)">
+      <div class="input-group">
+        <label>¿Cuántas personas viajan en total?</label>
+        <input type="number" id="final-personas" min="1" max="50" required placeholder="Ej: 3">
+      </div>
+
+      <div class="input-group">
+        <label>¿En qué fecha te gustaría viajar?</label>
+        <input type="date" id="final-fecha" required>
+      </div>
+
+      <button type="submit" class="btn-final">Confirmar Itinerario Mágico</button>
+    </form>
+  </div>
+
+  <script>
+    // Extraer datos de la URL
+    const params = new URLSearchParams(window.location.search);
+    const destino = params.get('destino');
+    const email = params.get('email');
+
+    if (destino) {
+      document.getElementById('display-destino').innerText = destino;
+    }
+
+    function finalizarTodo(e) {
+      e.preventDefault();
+      const personas = document.getElementById('final-personas').value;
+      const fecha = document.getElementById('final-fecha').value;
+
+      alert(`¡Gracias!\nHemos enviado un presupuesto detallado a ${email}.\nDestino: ${destino}\nGrupo: ${personas} personas\nFecha: ${fecha}\n\n¡Prepárate para la aventura!`);
+      
+      // Opcional: Redirigir al inicio después de unos segundos
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>

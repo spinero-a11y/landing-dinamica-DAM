@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Configura tu Estancia — VeranoSummer</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --c-magic-blue: #1a2a6c;
+      --c-gold: #b4975a;
+      --c-accent: #e63946;
+    }
+    body { background: #f4f6f9; font-family: 'DM Sans', sans-serif; margin: 0; }
+
+    .booking-flow-container {
+      max-width: 1100px;
+      margin: 40px auto;
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 30px;
+      padding: 20px;
+    }
+
+    .selection-side {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    /* ESTILO BOTÓN VOLVER */
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--c-magic-blue);
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+      transition: 0.3s;
+      opacity: 0.7;
+    }
+    .btn-back:hover { opacity: 1; transform: translateX(-5px); }
+
+    .summary-side {
+      background: var(--c-magic-blue);
+      color: white;
+      padding: 30px;
+      border-radius: 20px;
+      position: sticky;
+      top: 20px;
+      height: fit-content;
+    }
+
+    h1, h2 { font-family: 'Fraunces', serif; }
+
+    .input-row { margin-bottom: 25px; }
+    label { display: block; margin-bottom: 10px; font-weight: 500; color: #444; }
+    input { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 10px; font-size: 1rem; outline: none; }
+    input:focus { border-color: var(--c-gold); }
+
+    .calc-item { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.9rem; opacity: 0.9; }
+    .total-big { font-size: 2rem; font-family: 'Fraunces', serif; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px; margin-top: 15px; display: block; }
+
+    .hotel-card {
+      border: 2px solid #eee;
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 20px;
+      display: flex;
+      gap: 20px;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+    .hotel-card.active { border-color: var(--c-gold); background: #fffdf9; }
+
+    .pay-btn {
+      width: 100%;
+      margin-top: 30px;
+      background: var(--c-gold);
+      color: white;
+      border: none;
+      padding: 18px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .pay-btn:hover { background: #9c834d; }
+  </style>
+</head>
+<body>
+
+  <div class="booking-flow-container">
+    
+    <div class="selection-side">
+      <!-- BOTÓN VOLVER AL INICIO -->
+      <a href="index.html" class="btn-back">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Volver al inicio
+      </a>
+
+      <h1>Configura tu viaje a <span id="nombre-destino" style="color:var(--c-gold)">...</span></h1>
+      <p>Personaliza los detalles para que la magia comience.</p>
+      
+      <div class="input-row">
+        <label>¿Cuántos aventureros acudirán al viaje?</label>
+        <input type="number" id="num-personas" value="2" min="1" oninput="actualizarCalculos()">
+      </div>
+
+      <div class="input-row">
+        <label>Fecha de llegada</label>
+        <input type="date" id="fecha-viaje" onchange="actualizarCalculos()">
+      </div>
+
+      <hr style="margin: 40px 0; opacity: 0.1;">
+
+      <h2>Tu alojamiento incluido</h2>
+      <div class="hotel-card active">
+        <div style="background: #eee; width: 100px; height: 80px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">🏨</div>
+        <div>
+          <strong style="display:block">VeranoSummer Grand Resort</strong>
+          <small>Incluye desayuno buffet y traslados privados.</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-side">
+      <h3>Tu Itinerario</h3>
+      <div id="resumen-texto" style="margin-bottom: 20px; font-size: 0.9rem;">
+        Cargando detalles...
+      </div>
+
+      <div class="calc-box">
+        <div class="calc-item">
+          <span>Precio base por persona</span>
+          <span id="precio-unitario">0€</span>
+        </div>
+        <div class="calc-item" id="fila-descuento" style="display:none; color: #ffbcbc;">
+          <span>Descuento Estudiante (-20%)</span>
+          <span id="monto-descuento">0€</span>
+        </div>
+        <div class="total-big">
+          <small style="font-size: 0.8rem; display: block; opacity: 0.7;">Precio Total</small>
+          <span id="precio-total">0€</span>
+        </div>
+      </div>
+
+      <button class="pay-btn" onclick="irAlCheckout()">
+        Confirmar Reserva
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const destino = params.get('destino') || "París, Francia";
+    const esEstudiante = params.get('estudiante') === 'true';
+
+    const preciosBase = {
+      "Santorini, Grecia": 450,
+      "Tokio, Japón": 890,
+      "París, Francia": 520,
+      "Reikiavik, Islandia": 680,
+      "Bali, Indonesia": 750,
+      "Nueva York, USA": 790,
+      "Roma, Italia": 410,
+      "El Cairo, Egipto": 620,
+      "Sídney, Australia": 1150
+    };
+
+    function inicializar() {
+      const elNombre = document.getElementById('nombre-destino');
+      if(elNombre) elNombre.innerText = destino;
+      
+      const mañana = new Date();
+      mañana.setDate(mañana.getDate() + 1);
+      const inputFecha = document.getElementById('fecha-viaje');
+      if(inputFecha) inputFecha.valueAsDate = mañana;
+      
+      actualizarCalculos();
+    }
+
+    function actualizarCalculos() {
+      const n = parseInt(document.getElementById('num-personas').value) || 1;
+      const fecha = document.getElementById('fecha-viaje').value;
+      const pBase = preciosBase[destino] || 500;
+
+      let subtotal = pBase * n;
+      let total = subtotal;
+
+      if (esEstudiante) {
+        const ahorro = subtotal * 0.20;
+        total = subtotal - ahorro;
+        document.getElementById('fila-descuento').style.display = 'flex';
+        document.getElementById('monto-descuento').innerText = `-${ahorro.toFixed(0)}€`;
+      }
+
+      document.getElementById('precio-unitario').innerText = `${pBase}€`;
+      document.getElementById('precio-total').innerText = `${total.toFixed(0)}€`;
+      
+      const fechaFormateada = fecha ? new Date(fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' }) : "Pendiente";
+      document.getElementById('resumen-texto').innerHTML = `
+        <strong>Destino:</strong> ${destino}<br>
+        <strong>Viajeros:</strong> ${n} ${n > 1 ? 'personas' : 'persona'}<br>
+        <strong>Fecha:</strong> ${fechaFormateada}
+      `;
+    }
+
+    function irAlCheckout() {
+      const n = document.getElementById('num-personas').value;
+      const fecha = document.getElementById('fecha-viaje').value;
+      const total = document.getElementById('precio-total').innerText.replace('€', '');
+      const urlFinal = `checkout.html?destino=${encodeURIComponent(destino)}&personas=${n}&fecha=${fecha}&total=${total}`;
+      window.location.href = urlFinal;
+    }
+
+    window.onload = inicializar;
+  </script>
+</body>
+</html>

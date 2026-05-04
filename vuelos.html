@@ -1,0 +1,145 @@
+<script>
+    // 1. BASE DE DATOS EXTENDIDA (Coherente con el buscador alfabético)
+    const airports = [
+        { code: "MAD", name: "Madrid - Adolfo Suárez Barajas", city: "Madrid", country: "España" },
+        { code: "BCN", name: "Barcelona - El Prat", city: "Barcelona", country: "España" },
+        { code: "SVQ", name: "Sevilla - San Pablo", city: "Sevilla", country: "España" },
+        { code: "XRY", name: "Jerez de la Frontera", city: "Jerez", country: "España" },
+        { code: "VLC", name: "Valencia - Manises", city: "Valencia", country: "España" },
+        { code: "AGP", name: "Málaga - Costa del Sol", city: "Málaga", country: "España" },
+        { code: "BIO", name: "Bilbao", city: "Bilbao", country: "España" },
+        { code: "PMI", name: "Palma de Mallorca", city: "Palma", country: "España" },
+        { code: "CDG", name: "París - Charles de Gaulle", city: "París", country: "Francia" },
+        { code: "ORY", name: "París - Orly", city: "París", country: "Francia" },
+        { code: "LHR", name: "Londres - Heathrow", city: "Londres", country: "Reino Unido" },
+        { code: "LGW", name: "Londres - Gatwick", city: "Londres", country: "Reino Unido" },
+        { code: "FCO", name: "Roma - Fiumicino", city: "Roma", country: "Italia" },
+        { code: "NRT", name: "Tokio - Narita", city: "Tokio", country: "Japón" },
+        { code: "PEK", name: "Pekín - Capital", city: "Pekín", country: "China" },
+        { code: "JFK", name: "Nueva York - JFK", city: "Nueva York", country: "EE.UU." },
+        { code: "JTR", name: "Santorini", city: "Santorini", country: "Grecia" },
+        { code: "AMS", name: "Ámsterdam - Schiphol", city: "Ámsterdam", country: "Países Bajos" },
+        { code: "FRA", name: "Frankfurt", city: "Frankfurt", country: "Alemania" },
+        { code: "LIS", name: "Lisboa", city: "Lisboa", country: "Portugal" }
+    ];
+
+    // 2. SIMULACIÓN DE VUELOS (Variedad de aerolíneas y precios)
+    const flightData = [
+        { to: "LHR", toName: "Londres", airline: "British Airways", price: 55 },
+        { to: "LGW", toName: "Londres", airline: "Vueling", price: 28 },
+        { to: "CDG", toName: "París", airline: "Air France", price: 45 },
+        { to: "ORY", toName: "París", airline: "Vueling", price: 32 },
+        { to: "FCO", toName: "Roma", airline: "ITA Airways", price: 39 },
+        { to: "JTR", toName: "Santorini", airline: "Aegean", price: 89 },
+        { to: "BCN", toName: "Barcelona", airline: "Vueling", price: 21 },
+        { to: "MAD", toName: "Madrid", airline: "Iberia", price: 25 },
+        { to: "AMS", toName: "Ámsterdam", airline: "KLM", price: 92 },
+        { to: "LIS", toName: "Lisboa", airline: "TAP Air Portugal", price: 19 },
+        { to: "JFK", toName: "Nueva York", airline: "Delta Airlines", price: 410 },
+        { to: "NRT", toName: "Tokio", airline: "ANA", price: 780 },
+        { to: "PEK", toName: "Pekín", airline: "Air China", price: 650 }
+    ];
+
+    function init() {
+        const select = document.getElementById('airport-select');
+        if (!select) return;
+
+        // Limpiar y rellenar select (Ordenado alfabéticamente por ciudad)
+        select.innerHTML = '<option value="">Selecciona origen</option>';
+        const sortedAirports = [...airports].sort((a, b) => a.city.localeCompare(b.city));
+        
+        sortedAirports.forEach(ap => {
+            const opt = document.createElement('option');
+            opt.value = ap.code;
+            opt.textContent = `${ap.city} (${ap.code}) - ${ap.name}`;
+            select.appendChild(opt);
+        });
+
+        // LEER PARÁMETROS DE LA URL
+        const params = new URLSearchParams(window.location.search);
+        const fromParam = params.get('from');
+        const toParam = params.get('to');
+        const dateParam = params.get('date');
+
+        if (fromParam) {
+            select.value = fromParam;
+            findFlights(toParam, dateParam);
+        }
+    }
+
+    function findFlights(targetDest = null, flightDate = null) {
+        const originCode = document.getElementById('airport-select').value;
+        const resultsDiv = document.getElementById('results');
+        
+        if (!originCode) {
+            alert("Por favor, selecciona un origen.");
+            return;
+        }
+
+        const dateToShow = flightDate || new Date().toISOString().split('T')[0];
+
+        resultsDiv.innerHTML = `
+            <div style="text-align:center; padding: 30px;">
+                <div class="loader"></div> <p>Buscando las mejores tarifas desde <strong>${originCode}</strong>...</p>
+                <small>Fecha de viaje: ${dateToShow}</small>
+            </div>`;
+
+        setTimeout(() => {
+            // Filtrado: Si el usuario eligió un destino en el index, mostramos ese.
+            // Si no, mostramos todas las ofertas desde ese origen.
+            let filteredData = targetDest 
+                ? flightData.filter(f => f.to === targetDest) 
+                : flightData;
+
+            // Evitar que el origen sea igual al destino
+            filteredData = filteredData.filter(f => f.to !== originCode);
+
+            if (filteredData.length === 0) {
+                resultsDiv.innerHTML = `
+                    <div style="text-align:center; padding: 40px;">
+                        <h3>No hay vuelos directos disponibles</h3>
+                        <p>No hemos encontrado rutas directas de ${originCode} a ${targetDest} para esta fecha.</p>
+                        <button onclick="location.href='index.html'" class="btn-go">Volver a buscar</button>
+                    </div>`;
+                return;
+            }
+
+            resultsDiv.innerHTML = `<h3>Vuelos encontrados:</h3>`;
+            
+            filteredData.forEach(flight => {
+                const dynamicPrice = flight.price + Math.floor(Math.random() * 10);
+                const esLejano = ["JFK", "NRT", "PEK"].includes(flight.to) || ["JFK", "NRT", "PEK"].includes(originCode);
+                const textoBoton = esLejano ? "RESERVAR VUELO" : "COMPRAR BILLETE";
+
+                resultsDiv.innerHTML += `
+                    <div class="flight-card">
+                        <div class="airline-box">
+                            <strong>${flight.airline}</strong><br>
+                            <span style="font-size:0.8rem; color:#666">${esLejano ? 'Con 1 escala' : 'Vuelo Directo'}</span>
+                        </div>
+                        <div class="route-box">
+                            <div>
+                                <div class="airport-code">${originCode}</div>
+                                <div style="font-size:0.7rem; color:#888">Salida</div>
+                            </div>
+                            <div class="plane-divider"></div>
+                            <div>
+                                <div class="airport-code">${flight.to}</div>
+                                <div style="font-size:0.8rem">${flight.toName}</div>
+                            </div>
+                        </div>
+                        <div class="price-box">
+                            <div class="price-tag">${dynamicPrice}€</div>
+                            <a href="https://www.google.com/flights?hl=es#flt=${originCode}.${flight.to}.${dateToShow}" 
+                               target="_blank" class="btn-go">
+                               ${textoBoton}
+                            </a>
+                        </div>
+                    </div>
+                `;
+            });
+        }, 1000);
+    }
+
+    window.onload = init;
+</script>

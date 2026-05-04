@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeranoSummer — Vuelos & Alojamientos</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* --- MEJORAS DEL SELECTOR Y BUSCADOR --- */
+    #hero-search { position: relative; width: 100%; max-width: 900px; margin: 0 auto; }
+    
+    .selector-container {
+      position: absolute;
+      top: 105%;
+      left: 0;
+      width: 100%;
+      max-width: 500px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+      display: none;
+      z-index: 9999;
+      border: 1px solid #e2e2e2;
+      animation: slideIn 0.25s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .selector-container.active { display: block; }
+
+    @media (max-width: 768px) {
+      .selector-container { position: fixed; top: 10%; left: 5%; width: 90%; max-height: 80vh; }
+    }
+
+    .vy-list-dropdown { max-height: 350px; overflow-y: auto; padding: 10px 0; }
+
+    .vy-list-item {
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+      padding: 15px 20px; border: none; background: white; cursor: pointer;
+      transition: all 0.2s; border-bottom: 1px solid #f5f5f5;
+    }
+    .vy-list-item:hover { background-color: #f1f4f9; padding-left: 25px; }
+
+    /* --- ESTILOS DE RESEÑAS INFINITAS --- */
+    #testimonios { padding: 80px 0; background: #fff; overflow: hidden; }
+
+    .marquee-wrapper {
+        width: 100%; overflow: hidden;
+        mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+        -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    }
+
+    .marquee-content {
+        display: flex; gap: 50px; padding: 30px 0; width: max-content;
+        animation: scrollInfinite 50s linear infinite;
+    }
+
+    @keyframes scrollInfinite {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+
+    .marquee-wrapper:hover .marquee-content { animation-play-state: paused; }
+
+    .review-card-fixed {
+        flex-shrink: 0; width: 350px; background: #fff; padding: 30px;
+        border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+        border: 1px solid #f0f0f0;
+    }
+
+    .rev-stars { color: #ffcc00; margin-bottom: 10px; }
+    .rev-text { font-family: 'DM Sans', sans-serif; font-style: italic; color: #444; line-height: 1.6; }
+    .rev-user { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #1a2a6c; font-size: 0.8rem; margin-top: 15px; display: block; }
+  </style>
+</head>
+<body>
+
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">VeranoSummer</a>
+      <ul class="nav-links">
+        <li><a href="#destinations">Destinos</a></li>
+        <li><a href="#testimonios">Reseñas</a></li>
+        <li><a href="checkout.html" class="nav-cta">Reservar ahora</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header id="hero">
+    <div id="hero-bg"></div>
+    <div class="hero-content">
+      <span class="hero-tag">Explora el mundo a tu ritmo</span>
+      <h1 class="hero-title">Viaja <em>mejor</em>, no más.</h1>
+
+      <div id="hero-search">
+        <div class="search-tabs">
+          <div class="search-tab active" id="tab-vuelos" onclick="cambiarModo('vuelos')">Vuelos</div>
+          <div class="search-tab" id="tab-alojamientos" onclick="cambiarModo('alojamientos')">Alojamientos</div>
+        </div>
+        
+        <div class="search-fields" id="main-search-container">
+          <div class="search-field" id="field-origen" onclick="abrirSelector('origen')">
+            <label>Origen</label>
+            <input type="text" id="origen-input" readonly placeholder="¿Desde dónde?">
+          </div>
+          <div class="pill-divider"></div>
+          <div class="search-field" id="field-destino" onclick="abrirSelector('destino')">
+            <label id="label-destino">Destino</label>
+            <input type="text" id="destino-input" readonly placeholder="¿A dónde vas?">
+          </div>
+          <div class="pill-divider"></div>
+          <div class="search-field">
+            <label>Fecha</label>
+            <input type="date" id="fecha-input">
+          </div>
+          <button class="search-btn" onclick="realizarBusqueda()">Buscar</button>
+
+          <div id="selector-modal" class="selector-container">
+            <div class="selector-header" style="padding:15px; border-bottom:2px solid #ffeb00; display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-weight:bold; font-family:'JetBrains Mono';">SELECCIONA AEROPUERTO</span>
+              <button onclick="event.stopPropagation(); cerrarSelector();" style="background:none; border:none; cursor:pointer;">✕</button>
+            </div>
+            <div id="lista-alfabetica" class="vy-list-dropdown"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="destinations">
+    <div class="section-inner">
+      <p class="section-label">Selección 2026</p>
+      <h2 class="section-title">Destinos que inspiran</h2>
+      <div class="destinations-grid">
+        <div class="dest-card featured">
+          <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800" class="dest-img" alt="Grecia">
+          <div class="dest-overlay"></div>
+          <div class="dest-badge">Tendencia</div>
+          <div class="dest-base-info">
+            <h3 class="dest-name">Santorini, Grecia</h3>
+            <p class="dest-meta">Desde 120€ • Vuelo + Villa</p>
+          </div>
+          <div class="dest-info-overlay">
+            <div class="dest-info-price">Desde 450€</div>
+            <p class="dest-info-desc">Vuelo + 4 noches en villa con vista al mar.</p>
+            <button class="dest-info-btn" onclick="window.location.href='detalles-santorini.html'">Ver detalles</button>
+          </div>
+        </div>
+        <div class="dest-card featured">
+          <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800" class="dest-img" alt="París">
+          <div class="dest-overlay"></div>
+          <div class="dest-badge">Popular</div>
+          <div class="dest-base-info">
+            <h3 class="dest-name">París, Francia</h3>
+            <p class="dest-meta">Desde 95€ • Hoteles Boutique</p>
+          </div>
+          <div class="dest-info-overlay">
+            <div class="dest-info-price">Desde 520€</div>
+            <p class="dest-info-desc">Escapada romántica cerca de la Torre Eiffel.</p>
+            <button class="dest-info-btn" onclick="window.location.href='detalles-paris.html'">Ver detalles</button>
+          </div>
+        </div>
+        <div class="dest-card featured">
+          <img src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800" class="dest-img" alt="Londres">
+          <div class="dest-overlay"></div>
+          <div class="dest-badge">Urbano</div>
+          <div class="dest-base-info">
+            <h3 class="dest-name">Londres, Reino Unido</h3>
+            <p class="dest-meta">Desde 85€ • Hoteles de Lujo</p>
+          </div>
+          <div class="dest-info-overlay">
+            <div class="dest-info-price">Desde 480€</div>
+            <p class="dest-info-desc">Vuelo + 3 noches en hotel de diseño moderno.</p>
+            <button class="dest-info-btn" onclick="window.location.href='detalles-londres.html'">Ver detalles</button>
+          </div>
+        </div>
+        <div class="dest-card featured">
+          <img src="https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=800" class="dest-img" alt="Pekín">
+          <div class="dest-overlay"></div>
+          <div class="dest-badge">Exótico</div>
+          <div class="dest-base-info">
+            <h3 class="dest-name">Pekín, China</h3>
+            <p class="dest-meta">Desde 550€ • Hoteles 5★</p>
+          </div>
+          <div class="dest-info-overlay">
+            <div class="dest-info-price">Desde 1.250€</div>
+            <p class="dest-info-desc">Circuito Imperial con visitas guiadas.</p>
+            <button class="dest-info-btn" onclick="window.location.href='detalles-pekin.html'">Ver detalles</button>
+          </div>
+        </div>
+        <div class="dest-card featured">
+          <img src="https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800" class="dest-img" alt="Barcelona">
+          <div class="dest-overlay"></div>
+          <div class="dest-badge">Cultura</div>
+          <div class="dest-base-info">
+            <h3 class="dest-name">Barcelona, España</h3>
+            <p class="dest-meta">Desde 45€ • Modernismo</p>
+          </div>
+          <div class="dest-info-overlay">
+            <div class="dest-info-price">Desde 320€</div>
+            <p class="dest-info-desc">Vuelo + 3 noches y tour gastronómico.</p>
+            <button class="dest-info-btn" onclick="window.location.href='detalles-barcelona.html'">Ver detalles</button>
+          </div>
+        </div>
+        <div class="dest-card featured">
+          <img src="https://hoycuriosidades.com/wp-content/uploads/2022/04/valencia-4595268_1920.jpg" class="dest-img" alt="Valencia">
+          <div class="dest-overlay"></div>
+          <div class="dest-badge">Playa</div>
+          <div class="dest-base-info">
+            <h3 class="dest-name">Valencia, España</h3>
+            <p class="dest-meta">Desde 35€ • Gastronomía</p>
+          </div>
+          <div class="dest-info-overlay">
+            <div class="dest-info-price">Desde 290€</div>
+            <p class="dest-info-desc">Sol y cultura frente al mar Mediterráneo.</p>
+            <button class="dest-info-btn" onclick="window.location.href='detalles-valencia.html'">Ver detalles</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="testimonios">
+    <div class="section-inner" style="text-align: center; margin-bottom: 40px;">
+        <p class="section-label">Experiencias</p>
+        <h2 class="section-title">Comunidad VeranoSummer</h2>
+    </div>
+    <div class="marquee-wrapper">
+        <div class="marquee-content" id="marquee-list"></div>
+    </div>
+  </section>
+
+  <script>
+    const destinosDB = [
+      { pais: "España", ciudad: "Madrid", code: "MAD" },
+      { pais: "España", ciudad: "Barcelona", code: "BCN" },
+      { pais: "Francia", ciudad: "París", code: "CDG" },
+      { pais: "Italia", ciudad: "Roma", code: "FCO" },
+      { pais: "Reino Unido", ciudad: "Londres", code: "LHR" },
+      { pais: "Estados Unidos", ciudad: "Nueva York", code: "JFK" },
+      { pais: "Japón", ciudad: "Tokio", code: "NRT" },
+      { pais: "Grecia", ciudad: "Santorini", code: "JTR" },
+      { pais: "China", ciudad: "Pekín", code: "PEK" },
+      { pais: "Alemania", ciudad: "Frankfurt", code: "FRA" }
+    ];
+
+    const reseñas = [
+        { user: "@ana_travel", text: "Santorini fue un sueño gracias a sus recomendaciones." },
+        { user: "@carlos.ruiz", text: "El buscador de aeropuertos es el más rápido que he usado." },
+        { user: "@marta_j", text: "Increíble selección de hoteles boutique en el centro de Roma." },
+        { user: "@sergio_vlc", text: "Atención al cliente de 10. Resolvieron mi duda en minutos." },
+        { user: "@lucia_sanz", text: "Vuelos baratos y un piso precioso en el centro de Londres." },
+        { user: "@javi_lopez", text: "La web es súper fácil de usar. Muy intuitiva en móvil." },
+        { user: "@elena.m", text: "Encontré un apartamento en París con vistas increíbles." },
+        { user: "@marc_world", text: "Pekín fue una experiencia única. Todo muy bien organizado." },
+        { user: "@pau_travels", text: "Valencia en Fallas fue genial, el hotel estaba muy bien ubicado." },
+        { user: "@dani_bcn", text: "¡Mi agencia de confianza para todas mis vacaciones!" }
+    ];
+
+    let modoActual = 'vuelos';
+    let inputActivo = '';
+
+    function cambiarModo(modo) {
+      modoActual = modo;
+      document.getElementById('tab-vuelos').classList.toggle('active', modo === 'vuelos');
+      document.getElementById('tab-alojamientos').classList.toggle('active', modo === 'alojamientos');
+      document.getElementById('field-origen').style.opacity = modo === 'alojamientos' ? "0.3" : "1";
+    }
+
+    function abrirSelector(tipo) {
+      if (modoActual === 'alojamientos' && tipo === 'origen') return;
+      inputActivo = tipo;
+      const modal = document.getElementById('selector-modal');
+      const lista = document.getElementById('lista-alfabetica');
+      document.body.style.overflow = 'hidden';
+      modal.classList.add('active');
+      lista.innerHTML = "";
+      destinosDB.sort((a,b) => a.ciudad.localeCompare(b.ciudad)).forEach(c => {
+        const btn = document.createElement('button');
+        btn.className = 'vy-list-item';
+        btn.onclick = (e) => { e.stopPropagation(); seleccionarDato(`${c.ciudad} (${c.code})`); };
+        btn.innerHTML = `<div><span class="vy-label-primary">${c.ciudad}</span><br><small>${c.pais}</small></div><span style="font-family:'JetBrains Mono'; font-weight:bold;">${c.code}</span>`;
+        lista.appendChild(btn);
+      });
+    }
+
+    function seleccionarDato(valor) {
+      document.getElementById(`${inputActivo}-input`).value = valor;
+      cerrarSelector();
+    }
+
+    function cerrarSelector() {
+      document.getElementById('selector-modal').classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+
+    function realizarBusqueda() {
+      const ori = document.getElementById('origen-input').value;
+      const des = document.getElementById('destino-input').value;
+      const fec = document.getElementById('fecha-input').value;
+      if (!des || !fec) return alert("Completa los campos");
+      if (modoActual === 'vuelos') {
+        if (!ori) return alert("Selecciona origen");
+        window.location.href = `vuelos.html?from=${ori}&to=${des}&date=${fec}`;
+      } else {
+        window.location.href = `alojamientos.html?destino=${encodeURIComponent(des)}&fecha=${fec}`;
+      }
+    }
+
+    const marquee = document.getElementById('marquee-list');
+    [...reseñas, ...reseñas].forEach(r => {
+        marquee.innerHTML += `
+            <div class="review-card-fixed">
+                <div class="rev-stars">★★★★★</div>
+                <p class="rev-text">"${r.text}"</p>
+                <span class="rev-user">${r.user}</span>
+            </div>
+        `;
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!document.getElementById('main-search-container').contains(e.target)) cerrarSelector();
+    });
+
+    window.onload = () => {
+      const f = document.getElementById('fecha-input');
+      const hoy = new Date().toISOString().split('T')[0];
+      f.value = hoy; f.min = hoy;
+    };
+  </script>
+</body>
+</html>

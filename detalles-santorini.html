@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Viaje: Santorini - Agencia de Viajes</title>
+    <style>
+        :root {
+            --primary: #005bae; /* Azul Egeo */
+            --secondary: #00a8e8; /* Azul cielo */
+            --dark: #003366;
+            --light: #ffffff;
+            --bg: #f0f4f8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            line-height: 1.6;
+            background-color: var(--bg);
+            color: #333;
+        }
+
+        .hero {
+            height: 60vh;
+            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.3)), 
+                        url('https://images.unsplash.com/photo-1533105079780-92b9be482077?w=1200');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+
+        .hero h1 { font-size: 3.5rem; margin: 0; text-shadow: 2px 2px 10px rgba(0,0,0,0.4); }
+
+        .container {
+            max-width: 1000px;
+            margin: -50px auto 50px;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,91,174,0.1);
+            position: relative;
+        }
+
+        .price-badge {
+            background: var(--primary);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            display: inline-block;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+        }
+
+        .itinerary h2 { border-left: 5px solid var(--primary); padding-left: 15px; color: var(--dark); }
+
+        .day { margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .day strong { color: var(--secondary); display: block; font-size: 1.1rem; }
+
+        .sidebar {
+            background: #f0f7ff;
+            padding: 20px;
+            border-radius: 10px;
+            height: fit-content;
+            border: 1px solid #d1e3ff;
+        }
+
+        /* --- ESTILOS DE BOTONES --- */
+        .btn-book {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: background 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .btn-book:hover { 
+            background: var(--dark);
+        }
+
+        /* Botón para volver al índice */
+        .btn-back {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: var(--primary);
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            margin-top: 15px;
+            border: 2px solid var(--primary);
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .btn-back:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .details-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <div>
+            <h1>Santorini, Grecia</h1>
+            <p>El paraíso azul y blanco sobre el volcán del Egeo.</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="price-badge">Desde 450€ por persona</div>
+        
+        <div class="details-grid">
+            <section class="main-info">
+                <div class="itinerary">
+                    <h2>Escapada a las Cícladas</h2>
+                    
+                    <div class="day">
+                        <strong>Día 1: Llegada a Fira</strong>
+                        <p>Traslado al hotel y tiempo libre para explorar la capital. Paseo por las calles empedradas con vistas espectaculares a la caldera.</p>
+                    </div>
+
+                    <div class="day">
+                        <strong>Día 2: Oia y el Atardecer</strong>
+                        <p>Visita al pueblo de Oia, famoso por sus cúpulas azules. Tarde de relax y reserva en terraza privada para ver la puesta de sol más famosa del mundo.</p>
+                    </div>
+
+                    <div class="day">
+                        <strong>Día 3: Navegación por la Caldera</strong>
+                        <p>Excursión en catamarán por las islas volcánicas y fuentes termales. Incluye comida a bordo y tiempo para hacer snorkel en la Playa Roja.</p>
+                    </div>
+
+                    <div class="day">
+                        <strong>Día 4: Playas Volcánicas y Despedida</strong>
+                        <p>Mañana en la playa de Perissa (arena negra). Compras de productos locales como vino Assyrtiko antes del vuelo de regreso.</p>
+                    </div>
+                </div>
+            </section>
+
+             <aside class="sidebar">
+                <h3>Reserva tu plaza:</h3>
+                
+                <div class="input-group">
+                    <label>Nº de personas</label>
+                    <input type="number" id="input-personas" value="2" min="1">
+                </div>
+                <div class="input-group">
+                    <label>Fecha de salida</label>
+                    <input type="date" id="input-fecha">
+                </div>
+
+                <hr style="margin: 20px 0; opacity: 0.2;">
+
+                <p style="font-size: 0.85rem; color: #666;"><strong>Incluye:</strong> Vuelos, Hotel Boutique, Desayunos y Seguro Premium.</p>
+                
+                <button onclick="irAConfiguracion()" class="btn-book">Reservar ahora</button>
+                
+                <a href="index.html" class="btn-back">← Volver al índice</a>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        // Establecer fecha de mañana por defecto en el input
+        window.onload = () => {
+            const f = document.getElementById('input-fecha');
+            const mañana = new Date();
+            mañana.setDate(mañana.getDate() + 1);
+            f.value = mañana.toISOString().split('T')[0];
+        };
+
+        function irAConfiguracion() {
+            const destino = "Santorini, Grecia";
+            const personas = document.getElementById('input-personas').value;
+            const fecha = document.getElementById('input-fecha').value;
+
+            if(!fecha) {
+                alert("Por favor, selecciona una fecha para tu viaje.");
+                return;
+            }
+
+            // Redirige a la página de confirmación/configuración enviando los parámetros en la URL
+            window.location.href = `configurar.html?destino=${encodeURIComponent(destino)}&personas=${personas}&fecha=${fecha}`;
+        }
+    </script>
+
+        </div>
+    </div>
+
+</body>
+</html>
