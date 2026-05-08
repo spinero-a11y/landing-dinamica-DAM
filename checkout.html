@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Catálogo de Aventuras — VeranoSummer</title>
-  <link rel="stylesheet" href="style.css">
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -16,6 +16,42 @@
 
     body { background: #f0f2f5; font-family: 'DM Sans', sans-serif; margin: 0; }
 
+    /* --- NAVEGACIÓN --- */
+    .nav-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px;
+      z-index: 100;
+      display: flex;
+      justify-content: flex-start;
+      box-sizing: border-box;
+    }
+
+    .home-btn {
+      background: rgba(255, 255, 255, 0.15);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .home-btn:hover {
+      background: var(--c-gold);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    /* --- HEADER --- */
     .adventure-header {
       background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200');
       background-size: cover;
@@ -28,11 +64,13 @@
       color: white;
       text-align: center;
       border-bottom: 6px solid var(--c-gold);
+      position: relative;
     }
 
-    .adventure-header h1 { font-family: 'Fraunces', serif; font-size: clamp(2rem, 5vw, 3.5rem); margin: 10px 0; }
+    .adventure-header h1 { font-family: 'Fraunces', serif; font-size: clamp(2.2rem, 6vw, 3.8rem); margin: 10px 0; }
 
-    .planning-container { max-width: 1400px; margin: -60px auto 50px; padding: 0 20px; }
+    /* --- BUSCADOR --- */
+    .planning-container { max-width: 1400px; margin: -60px auto 50px; padding: 0 20px; position: relative; z-index: 10; }
 
     .search-refiner {
       background: var(--c-white);
@@ -46,26 +84,18 @@
     }
 
     .input-group label { display: block; font-weight: 500; margin-bottom: 8px; color: var(--c-magic-blue); font-size: 0.85rem; }
-    .input-group input, .input-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; }
+    .input-group input, .input-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; box-sizing: border-box; }
 
     .student-btn-toggle {
       background: #f8f9ff; border: 2px dashed var(--c-gold); padding: 10px; border-radius: 10px; cursor: pointer;
       display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s;
     }
     .student-btn-toggle:hover { background: #f0f2ff; }
-    .student-btn-toggle input { width: 18px; height: 18px; accent-color: var(--c-magic-blue); }
 
-    .modal-verify {
-      display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
-    }
-    .modal-content {
-      background: white; margin: 10% auto; padding: 40px; border-radius: 25px;
-      max-width: 450px; text-align: center; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    }
-
-    .adventure-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-top: 40px; }
-    .adventure-card { background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: 0.4s; position: relative; }
+    /* --- GRID Y CARDS --- */
+    .adventure-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; margin-top: 40px; }
+    
+    .adventure-card { background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: 0.4s; display: flex; flex-direction: column; position: relative; }
     .adventure-card:hover { transform: translateY(-10px); box-shadow: 0 20px 50px rgba(0,0,0,0.15); }
 
     .price-badge {
@@ -73,83 +103,92 @@
       background: var(--c-magic-blue); color: white;
       padding: 10px 20px; border-radius: 12px; font-weight: bold; text-align: right;
     }
-    .old-price { text-decoration: line-through; font-size: 0.8rem; opacity: 0.6; display: block; }
-    .discount-tag { background: var(--c-discount); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 5px; }
 
     .btn-adventure { 
       background: var(--c-gold); color: white; width: 100%; padding: 16px; 
       border: none; border-radius: 12px; font-weight: bold; cursor: pointer; 
       text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
     }
-    .btn-adventure:hover { filter: brightness(1.1); }
+
+    /* --- MODAL --- */
+    .modal-verify {
+      display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
+    }
+    .modal-content {
+      background: white; margin: 10% auto; padding: 40px; border-radius: 25px;
+      max-width: 450px; text-align: center; position: relative;
+    }
   </style>
 </head>
 <body>
 
   <header class="adventure-header">
-    <span style="letter-spacing: 4px; font-size: 0.8rem;">DESCUBRE TU PRÓXIMA HISTORIA</span>
+    <div class="nav-top">
+      <a href="index.html" class="home-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        Inicio
+      </a>
+    </div>
+    <span style="letter-spacing: 4px; font-size: 0.8rem; opacity: 0.9;">DESCUBRE TU PRÓXIMA HISTORIA</span>
     <h1>Destinos Extraordinarios</h1>
   </header>
 
-  <div class="planning-container">
+  <main class="planning-container">
     <div class="search-refiner">
       <div class="input-group">
-        <label>¿Desde dónde vuelas?</label>
+        <label for="origen-actual">¿Desde dónde vuelas?</label>
         <input type="text" id="origen-actual" placeholder="Ciudad de salida" oninput="renderizarAventuras()">
       </div>
 
       <div class="input-group">
-        <label>Viajeros iniciales</label>
+        <label for="pasajeros">Viajeros iniciales</label>
         <select id="pasajeros" onchange="renderizarAventuras()">
           <option value="1">1 Persona</option>
           <option value="2" selected>2 Personas</option>
           <option value="3">3 Personas</option>
           <option value="4">4 Personas</option>
-          <option value="5">5 Personas</option>
-          <option value="grande">Grupo Grande (+6)</option>
+          <option value="grande">Grupo (+6)</option>
         </select>
       </div>
 
       <div class="input-group">
         <label>Descuento Especial 🎓</label>
         <div class="student-btn-toggle" onclick="verificarEstudiante()">
-          <input type="checkbox" id="es-estudiante" disabled>
+          <input type="checkbox" id="es-estudiante" style="pointer-events: none;">
           <span style="font-size: 0.8rem; font-weight: bold; color: var(--c-magic-blue);">Soy Estudiante</span>
         </div>
       </div>
 
       <div class="input-group">
-        <label>Fecha Estimada</label>
+        <label for="fecha-reserva">Fecha Estimada</label>
         <input type="date" id="fecha-reserva" onchange="renderizarAventuras()">
       </div>
     </div>
 
     <div class="adventure-grid" id="contenedor-aventuras"></div>
-  </div>
+  </main>
 
+  <!-- Modal de Verificación -->
   <div id="modalEstudiante" class="modal-verify">
     <div class="modal-content">
-      <span style="position:absolute; right:20px; top:10px; cursor:pointer; font-size: 1.5rem;" onclick="cerrarModal()">×</span>
+      <span style="position:absolute; right:20px; top:10px; cursor:pointer; font-size: 1.5rem;" onclick="cerrarModal()">&times;</span>
       <h2 style="font-family:Fraunces, serif; color: var(--c-magic-blue);">Verifica tu Estatus</h2>
-      <p style="font-size:0.9rem; color:#666;">Introduce tu email institucional (.edu o .es) para activar tu 20% de descuento.</p>
-      <input type="email" id="email-estudiante" style="width:80%; padding:12px; margin:20px 0; border:1px solid #ddd; border-radius:8px;" placeholder="nombre@universidad.edu">
-      <button class="btn-adventure" onclick="validarYActivar()">Verificar y Aplicar</button>
+      <p>Ahorra un 20% con tu cuenta institucional.</p>
+      <input type="email" id="email-estudiante" style="width:100%; padding:12px; margin:20px 0; border:1px solid #ddd; border-radius:8px; box-sizing: border-box;" placeholder="nombre@universidad.edu">
+      <button class="btn-adventure" onclick="validarYActivar()">Aplicar Descuento</button>
     </div>
   </div>
 
   <script>
     let verificado = false;
-    
     const destinos = [
-      { nombre: "Santorini, Grecia", tag: "ROMANCE", precio: 450, iata: "JTR", img: "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=600" },
-      { nombre: "Tokio, Japón", tag: "AVENTURA", precio: 890, iata: "NRT", img: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600" },
-      { nombre: "París, Francia", tag: "CULTURA", precio: 520, iata: "CDG", img: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600" },
-      { nombre: "Reikiavik, Islandia", tag: "NATURALEZA", precio: 680, iata: "KEF", img: "https://images.unsplash.com/photo-1521336575822-6da63fb45455?w=600" },
-      { nombre: "Bali, Indonesia", tag: "RELAX", precio: 750, iata: "DPS", img: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600" },
-      { nombre: "Nueva York, USA", tag: "URBANO", precio: 790, iata: "JFK", img: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600" },
-      { nombre: "Roma, Italia", tag: "HISTORIA", precio: 410, iata: "FCO", img: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600" },
-      { nombre: "El Cairo, Egipto", tag: "MISTERIO", precio: 620, iata: "CAI", img: "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?w=600" },
-      { nombre: "Sídney, Australia", tag: "PLAYA", precio: 1150, iata: "SYD", img: "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=600" }
+      { nombre: "Santorini, Grecia", tag: "ROMANCE", precio: 450, img: "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=600" },
+      { nombre: "Tokio, Japón", tag: "AVENTURA", precio: 890, img: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600" },
+      { nombre: "París, Francia", tag: "CULTURA", precio: 520, img: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600" },
+      { nombre: "Reikiavik, Islandia", tag: "NATURALEZA", precio: 680, img: "https://images.unsplash.com/photo-1521336575822-6da63fb45455?w=600" },
+      { nombre: "Bali, Indonesia", tag: "RELAX", precio: 750, img: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600" },
+      { nombre: "Nueva York, USA", tag: "URBANO", precio: 790, img: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600" }
     ];
 
     function verificarEstudiante() {
@@ -166,22 +205,22 @@
 
     function validarYActivar() {
       const email = document.getElementById('email-estudiante').value;
-      if (email.includes('.edu') || email.includes('.es')) {
+      // Regex mejorada para validar emails .edu o .es
+      const regex = /^[^\s@]+@[^\s@]+\.(edu|es)$/i;
+      
+      if (regex.test(email)) {
         verificado = true;
         document.getElementById('es-estudiante').checked = true;
         cerrarModal();
         renderizarAventuras();
       } else {
-        alert("Introduce un correo universitario válido.");
+        alert("Por favor, introduce un correo institucional válido (.edu o .es)");
       }
     }
 
     function renderizarAventuras() {
       const contenedor = document.getElementById('contenedor-aventuras');
-      let num = document.getElementById('pasajeros').value;
-      if(num === "grande") num = 10;
-      
-      const descuentoActivo = document.getElementById('es-estudiante').checked && verificado;
+      const descuentoActivo = document.getElementById('es-estudiante').checked;
       const origen = document.getElementById('origen-actual').value || "tu ubicación";
 
       contenedor.innerHTML = "";
@@ -190,39 +229,43 @@
         let precioFinal = descuentoActivo ? d.precio * 0.8 : d.precio;
 
         contenedor.innerHTML += `
-          <div class="adventure-card">
+          <article class="adventure-card">
             <div style="position:relative; height:240px;">
-              <img src="${d.img}" style="width:100%; height:100%; object-fit:cover;">
+              <img src="${d.img}" alt="Viaje a ${d.nombre}" style="width:100%; height:100%; object-fit:cover;">
               <div class="price-badge">
-                ${descuentoActivo ? `<span class="old-price">${d.precio}€</span>` : ''}
-                ${precioFinal.toFixed(0)}€ ${descuentoActivo ? '<span class="discount-tag">STUDENT</span>' : ''}
+                ${descuentoActivo ? `<span style="text-decoration:line-through; font-size:0.8rem; opacity:0.6; display:block;">${d.precio}€</span>` : ''}
+                ${Math.round(precioFinal)}€
                 <small style="display:block; font-size:0.6rem; font-weight:normal;">por persona</small>
               </div>
             </div>
-            <div style="padding:25px;">
-              <small style="color:var(--c-gold); font-weight:bold; letter-spacing:1px;">${d.tag}</small>
-              <h3 style="font-family:Fraunces, serif; margin:10px 0; font-size:1.5rem; color:var(--c-magic-blue);">${d.nombre}</h3>
-              <p style="font-size:0.85rem; color:#666; background:#f4f7ff; padding:12px; border-radius:10px;">
-                ✈️ Vuelos desde <strong>${origen}</strong>
-              </p>
-              <button class="btn-adventure" style="margin-top:20px;" onclick="irAConfiguracion('${d.nombre}')">Reservar Ahora</button>
+            <div style="padding:25px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <small style="color:var(--c-gold); font-weight:bold;">${d.tag}</small>
+                <h3 style="font-family:Fraunces, serif; margin:10px 0; color:var(--c-magic-blue);">${d.nombre}</h3>
+                <p style="font-size:0.85rem; color:#666;">✈️ Desde <strong>${origen}</strong></p>
+              </div>
+              <button class="btn-adventure" onclick="irAConfiguracion('${d.nombre}')">Reservar</button>
             </div>
-          </div>`;
+          </article>`;
       });
     }
 
-    // NUEVA FUNCIÓN: CONECTA CON CONFIGURAR.HTML (RESERVA)
     function irAConfiguracion(nombreDestino) {
       const pasajeros = document.getElementById('pasajeros').value;
       const fecha = document.getElementById('fecha-reserva').value;
-      const esEstudiante = document.getElementById('es-estudiante').checked && verificado;
-
-      // Redirigimos a configurar.html pasando destino, personas, fecha y estado de estudiante
-      const url = `configurar.html?destino=${encodeURIComponent(nombreDestino)}&personas=${pasajeros}&fecha=${fecha}&estudiante=${esEstudiante}`;
-      window.location.href = url;
+      const esEstudiante = document.getElementById('es-estudiante').checked;
+      
+      // Verificamos que se haya seleccionado una fecha
+      if(!fecha) {
+        alert("Por favor, selecciona una fecha estimada para tu viaje.");
+        return;
+      }
+      
+      window.location.href = `configurar.html?destino=${encodeURIComponent(nombreDestino)}&personas=${pasajeros}&fecha=${fecha}&estudiante=${esEstudiante}`;
     }
 
     window.onload = () => {
+      // Establecer fecha de mañana por defecto
       const hoy = new Date();
       hoy.setDate(hoy.getDate() + 1);
       document.getElementById('fecha-reserva').valueAsDate = hoy;

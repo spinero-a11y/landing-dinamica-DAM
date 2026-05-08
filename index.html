@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="style.css">
 
   <style>
-    /* --- MEJORAS DEL SELECTOR Y BUSCADOR --- */
+    /* --- ESTILOS DE BÚSQUEDA Y SELECTOR --- */
     #hero-search { position: relative; width: 100%; max-width: 900px; margin: 0 auto; }
     
     .selector-container {
@@ -50,13 +50,13 @@
     }
     .vy-list-item:hover { background-color: #f1f4f9; padding-left: 25px; }
 
-    /* --- ESTILOS DE RESEÑAS INFINITAS --- */
+    /* --- ESTILOS DE RESEÑAS --- */
     #testimonios { padding: 80px 0; background: #fff; overflow: hidden; }
 
     .marquee-wrapper {
         width: 100%; overflow: hidden;
-        mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
         -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+        mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
     }
 
     .marquee-content {
@@ -141,6 +141,7 @@
       <p class="section-label">Selección 2026</p>
       <h2 class="section-title">Destinos que inspiran</h2>
       <div class="destinations-grid">
+        
         <div class="dest-card featured">
           <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800" class="dest-img" alt="Grecia">
           <div class="dest-overlay"></div>
@@ -155,6 +156,7 @@
             <button class="dest-info-btn" onclick="window.location.href='detalles-santorini.html'">Ver detalles</button>
           </div>
         </div>
+
         <div class="dest-card featured">
           <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800" class="dest-img" alt="París">
           <div class="dest-overlay"></div>
@@ -169,6 +171,7 @@
             <button class="dest-info-btn" onclick="window.location.href='detalles-paris.html'">Ver detalles</button>
           </div>
         </div>
+
         <div class="dest-card featured">
           <img src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800" class="dest-img" alt="Londres">
           <div class="dest-overlay"></div>
@@ -183,6 +186,7 @@
             <button class="dest-info-btn" onclick="window.location.href='detalles-londres.html'">Ver detalles</button>
           </div>
         </div>
+
         <div class="dest-card featured">
           <img src="https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=800" class="dest-img" alt="Pekín">
           <div class="dest-overlay"></div>
@@ -197,6 +201,7 @@
             <button class="dest-info-btn" onclick="window.location.href='detalles-pekin.html'">Ver detalles</button>
           </div>
         </div>
+
         <div class="dest-card featured">
           <img src="https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800" class="dest-img" alt="Barcelona">
           <div class="dest-overlay"></div>
@@ -211,6 +216,7 @@
             <button class="dest-info-btn" onclick="window.location.href='detalles-barcelona.html'">Ver detalles</button>
           </div>
         </div>
+
         <div class="dest-card featured">
           <img src="https://hoycuriosidades.com/wp-content/uploads/2022/04/valencia-4595268_1920.jpg" class="dest-img" alt="Valencia">
           <div class="dest-overlay"></div>
@@ -225,6 +231,7 @@
             <button class="dest-info-btn" onclick="window.location.href='detalles-valencia.html'">Ver detalles</button>
           </div>
         </div>
+
       </div>
     </div>
   </section>
@@ -307,10 +314,12 @@
       const ori = document.getElementById('origen-input').value;
       const des = document.getElementById('destino-input').value;
       const fec = document.getElementById('fecha-input').value;
-      if (!des || !fec) return alert("Completa los campos");
+      
+      if (!des || !fec) return alert("Por favor, selecciona destino y fecha.");
+      
       if (modoActual === 'vuelos') {
-        if (!ori) return alert("Selecciona origen");
-        window.location.href = `vuelos.html?from=${ori}&to=${des}&date=${fec}`;
+        if (!ori) return alert("Por favor, selecciona origen.");
+        window.location.href = `destinos.html?from=${encodeURIComponent(ori)}&to=${encodeURIComponent(des)}&date=${fec}`;
       } else {
         window.location.href = `alojamientos.html?destino=${encodeURIComponent(des)}&fecha=${fec}`;
       }
