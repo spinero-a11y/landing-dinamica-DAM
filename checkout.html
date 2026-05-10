@@ -183,14 +183,59 @@
   <script>
     let verificado = false;
     const destinos = [
+      // --- EUROPA ---
       { nombre: "Santorini, Grecia", tag: "ROMANCE", precio: 450, img: "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=600" },
-      { nombre: "Tokio, Japón", tag: "AVENTURA", precio: 890, img: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600" },
       { nombre: "París, Francia", tag: "CULTURA", precio: 520, img: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600" },
       { nombre: "Reikiavik, Islandia", tag: "NATURALEZA", precio: 680, img: "https://images.unsplash.com/photo-1521336575822-6da63fb45455?w=600" },
+      { nombre: "Roma, Italia", tag: "HISTORIA", precio: 480, img: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600" },
+      { nombre: "Londres, Reino Unido", tag: "URBANO", precio: 560, img: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=600" },
+      { nombre: "Barcelona, España", tag: "ARQUITECTURA", precio: 380, img: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=600" },
+      { nombre: "Praga, Rep. Checa", tag: "HISTORIA", precio: 340, img: "https://images.unsplash.com/photo-1541849546-216549ae216d?w=600" },
+      { nombre: "Ámsterdam, Países Bajos", tag: "CANALES", precio: 410, img: "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=600" },
+      { nombre: "Viena, Austria", tag: "MÚSICA", precio: 430, img: "https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=600" },
+      { nombre: "Lisboa, Portugal", tag: "ENCANTO", precio: 360, img: "https://images.unsplash.com/photo-1533676802871-eca1ae998cd5?w=600" },
+
+      // --- ASIA & ORIENTE (IMÁGENES ACTUALIZADAS) ---
+      { nombre: "Tokio, Japón", tag: "AVENTURA", precio: 890, img: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600" },
       { nombre: "Bali, Indonesia", tag: "RELAX", precio: 750, img: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600" },
-      { nombre: "Nueva York, USA", tag: "URBANO", precio: 790, img: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600" }
+      { nombre: "Bangkok, Tailandia", tag: "EXÓTICO", precio: 620, img: "https://images.unsplash.com/photo-1563492065561-36d319a8fc11?w=600" }, // NUEVA
+      { nombre: "Seúl, Corea del Sur", tag: "TECNOLOGÍA", precio: 840, img: "https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=600" }, // NUEVA
+      { nombre: "Singapur", tag: "FUTURISTA", precio: 980, img: "https://images.unsplash.com/photo-1525596662741-e94ff99163e7?w=600" }, // NUEVA
+      { nombre: "Dubái, Emiratos Árabes", tag: "LUJO", precio: 950, img: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600" },
+      { nombre: "Kioto, Japón", tag: "TEMPLOS", precio: 810, img: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600" },
+      { nombre: "Estambul, Turquía", tag: "HISTORIA", precio: 420, img: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=600" },
+
+      // --- AMÉRICA (IMÁGENES ACTUALIZADAS) ---
+      { nombre: "Nueva York, USA", tag: "URBANO", precio: 790, img: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600" },
+      { nombre: "Ciudad de México, México", tag: "CULTURA", precio: 680, img: "https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=600" },
+      { nombre: "Machu Picchu, Perú", tag: "EXPLORACIÓN", precio: 850, img: "https://images.unsplash.com/photo-1526392060635-9d6019884377?w=600" }, // NUEVA
+      { nombre: "Río de Janeiro, Brasil", tag: "FIESTA", precio: 820, img: "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=600" },
+      { nombre: "Buenos Aires, Argentina", tag: "TANGO", precio: 740, img: "https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=600" },
+      { nombre: "Cartagena, Colombia", tag: "COLONIAL", precio: 590, img: "https://images.unsplash.com/photo-1548811579-017cf2a4268b?w=600" }, // NUEVA
+      { nombre: "Toronto, Canadá", tag: "MODERNO", precio: 710, img: "https://images.unsplash.com/photo-1517090504586-fde19ea6066f?w=600" },
+      { nombre: "Cusco, Perú", tag: "ANDINO", precio: 790, img: "https://images.unsplash.com/photo-1580619305218-8423a7ef79b4?w=600" },
+
+      // --- ÁFRICA & OCEANÍA ---
+      { nombre: "El Cairo, Egipto", tag: "MISTERIO", precio: 620, img: "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?w=600" },
+      { nombre: "Sídney, Australia", tag: "SURF", precio: 1150, img: "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=600" },
+      { nombre: "Ciudad del Cabo, Sudáfrica", tag: "PAISAJE", precio: 1100, img: "https://images.unsplash.com/photo-1580619305218-8423a7ef79b4?w=600" },
+      { nombre: "Marrakech, Marruecos", tag: "MERCADOS", precio: 320, img: "https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=600" },
+      { nombre: "Queenstown, N. Zelanda", tag: "EXTREMO", precio: 1300, img: "https://images.unsplash.com/photo-1507699622108-4be3abd695ad?w=600" }
     ];
 
+     function irAConfiguracion(nombreDestino) {
+      const pasajeros = document.getElementById('pasajeros').value;
+      const fecha = document.getElementById('fecha-reserva').value;
+      const esEstudiante = document.getElementById('es-estudiante').checked;
+      
+      // Verificamos que se haya seleccionado una fecha
+      if(!fecha) {
+        alert("Por favor, selecciona una fecha estimada para tu viaje.");
+        return;
+      }
+      
+      window.location.href = `configurar.html?destino=${encodeURIComponent(nombreDestino)}&personas=${pasajeros}&fecha=${fecha}&estudiante=${esEstudiante}`;
+    }
     function verificarEstudiante() {
       if (!verificado) {
         document.getElementById('modalEstudiante').style.display = 'block';
