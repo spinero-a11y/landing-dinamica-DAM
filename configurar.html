@@ -20,7 +20,6 @@
             color: #333;
         }
 
-        /* Estructura dividida: Selección y Resumen */
         .booking-flow-container {
             max-width: 1100px;
             margin: 40px auto;
@@ -65,7 +64,6 @@
         }
         input:focus { border-color: var(--c-gold); }
 
-        /* Tarjeta de Hotel */
         .hotel-card {
             border: 2px solid var(--c-gold);
             background: #fffdf9;
@@ -82,9 +80,8 @@
             border-radius: 12px;
             object-fit: cover;
         }
-
-        /* Desglose de precios en el resumen */
         .calc-box { margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+
         .calc-item { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.95rem; opacity: 0.9; }
         
         .total-big { 
@@ -122,7 +119,7 @@
 <body>
 
     <div class="booking-flow-container">
-        
+
         <main class="selection-side">
             <h1>Configura tu estancia en <span id="nombre-destino" style="color:var(--c-gold)">...</span></h1>
             <p>Ajusta los últimos detalles de tu aventura.</p>
@@ -151,9 +148,7 @@
 
         <aside class="summary-side">
             <h3>Tu Itinerario</h3>
-            
-            <div id="resumen-texto" style="font-size: 1rem; line-height: 1.8; margin-bottom: 25px;">
-                </div>
+            <div id="resumen-texto" style="font-size: 1rem; line-height: 1.8; margin-bottom: 25px;"></div>
 
             <div class="calc-box">
                 <div class="calc-item">
@@ -172,36 +167,31 @@
             </div>
 
             <button class="pay-btn" onclick="finalizarReserva()">
-                Confirmar y Reservar
+                Comprar y Pagar
             </button>
-            <p style="text-align: center; font-size: 0.75rem; margin-top: 15px; opacity: 0.6;">Reserva segura sin tarjeta de crédito obligatoria.</p>
+            <p style="text-align: center; font-size: 0.75rem; margin-top: 15px; opacity: 0.6;">Pago seguro procesado por VeranoSummer Pay.</p>
         </aside>
-
     </div>
 
     <script>
-        // 1. Precios base por destino
+        // Precios sincronizados con el catálogo
         const tablaPrecios = {
-            "París, Francia": 520,
-            "Santorini, Grecia": 450,
-            "Tokio, Japón": 890,
-            "Londres, Reino Unido": 480,
-            "Barcelona, España": 320,
-            "Pekín, China": 1250,
-            "Valencia, España": 290
+            "Santorini, Grecia": 450, "Tokio, Japón": 890, "París, Francia": 520,
+            "Reikiavik, Islandia": 680, "Bali, Indonesia": 750, "Nueva York, USA": 790,
+            "Roma, Italia": 480, "Londres, Reino Unido": 560, "Barcelona, España": 380,
+            "Machu Picchu, Perú": 850, "Sídney, Australia": 1150, "El Cairo, Egipto": 620
         };
 
-        // 2. Cargar datos de la URL
         const params = new URLSearchParams(window.location.search);
         const destinoURL = params.get('destino') || "París, Francia";
         const personasURL = params.get('personas') || 2;
         const fechaURL = params.get('fecha');
+        const esEstudiante = params.get('estudiante') === 'true';
 
         function inicializar() {
             document.getElementById('nombre-destino').innerText = destinoURL;
             document.getElementById('num-personas').value = personasURL;
             
-            // Si la fecha viene de la página anterior la ponemos, si no, ponemos hoy
             if(fechaURL) {
                 document.getElementById('fecha-viaje').value = fechaURL;
             } else {
@@ -215,12 +205,14 @@
         function actualizarCalculos() {
             const n = parseInt(document.getElementById('num-personas').value) || 1;
             const fecha = document.getElementById('fecha-viaje').value;
-            const pBase = tablaPrecios[destinoURL] || 500;
+            let pBase = tablaPrecios[destinoURL] || 500;
 
-            const total = pBase * n;
+            // Aplicamos descuento si el usuario es estudiante (viene de la página anterior)
+            if(esEstudiante) { pBase = pBase * 0.8; }
 
-            // Actualizar interfaz
-            document.getElementById('precio-unitario').innerText = `${pBase}€`;
+            const total = Math.round(pBase * n);
+
+            document.getElementById('precio-unitario').innerText = `${Math.round(pBase)}€`;
             document.getElementById('precio-total').innerText = `${total}€`;
             
             const fechaBonita = fecha ? new Date(fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : "No seleccionada";
@@ -229,17 +221,17 @@
                 <strong>📍 Destino:</strong> ${destinoURL}<br>
                 <strong>👥 Viajeros:</strong> ${n} ${n > 1 ? 'personas' : 'persona'}<br>
                 <strong>🗓️ Salida:</strong> ${fechaBonita}
+                ${esEstudiante ? '<br><span style="color:#4ade80;">🎓 Descuento Estudiante Aplicado</span>' : ''}
             `;
         }
 
         function finalizarReserva() {
-            const total = document.getElementById('precio-total').innerText;
+            const total = document.getElementById('precio-total').innerText.replace('€', '');
             const personas = document.getElementById('num-personas').value;
+            const fecha = document.getElementById('fecha-viaje').value;
 
-            // Mensaje de éxito sin pedir correo
-            alert(`¡MAGIA CONSEGUIDA!\n\nTu viaje a ${destinoURL} ha sido reservado.\nPara ${personas} personas.\nTotal: ${total}\n\nTu localizador es: VS-${Math.floor(Math.random()*90000)+10000}\n¡Gracias por confiar en VeranoSummer!`);
-            
-            window.location.href = "index.html"; // Redirigir al inicio
+            // Redirección a la página de compra
+            window.location.href = `compra.html?destino=${encodeURIComponent(destinoURL)}&total=${total}&personas=${personas}&fecha=${fecha}`;
         }
 
         window.onload = inicializar;

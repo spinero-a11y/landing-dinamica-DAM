@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vuelos desde París - VeranoSummer</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .vuelos-container {
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .vuelos-header {
+      margin-bottom: 40px;
+      padding: 20px;
+      background: linear-gradient(135deg, #1a2a6c 0%, #16213e 100%);
+      border-radius: 12px;
+      color: white;
+    }
+
+    .vuelos-header h1 {
+      margin: 0 0 10px 0;
+      font-size: 2.5rem;
+      font-family: 'Fraunces', serif;
+    }
+
+    .ruta-info {
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+    }
+
+    .ruta-info span {
+      font-weight: bold;
+      color: #ffeb00;
+    }
+
+    .filtros-vuelos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #f5f5f5;
+      border-radius: 12px;
+    }
+
+    .filtro-grupo {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .filtro-grupo label {
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #1a2a6c;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+    }
+
+    .filtro-grupo select,
+    .filtro-grupo input {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+    }
+
+    .vuelos-lista {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .vuelo-card {
+      background: white;
+      border: 1px solid #e2e2e2;
+      border-radius: 12px;
+      padding: 25px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 30px;
+      align-items: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .vuelo-card:hover {
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      transform: translateY(-2px);
+    }
+
+    .vuelo-detalles {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .vuelo-aeropuerto {
+      text-align: center;
+    }
+
+    .vuelo-hora {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #1a2a6c;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .vuelo-ciudad {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .vuelo-ruta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      color: #999;
+    }
+
+    .vuelo-ruta-linea {
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(to right, #1a2a6c, transparent);
+      min-width: 100px;
+    }
+
+    .vuelo-ruta-icon {
+      font-size: 1.5rem;
+    }
+
+    .vuelo-duracion {
+      font-size: 0.85rem;
+      color: #666;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .vuelo-aerolinea {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .vuelo-aerolinea-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #ffeb00 0%, #ffc107 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #1a2a6c;
+      font-size: 0.7rem;
+    }
+
+    .vuelo-aerolinea-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .vuelo-aerolinea-nombre {
+      font-weight: bold;
+      font-size: 0.95rem;
+      color: #1a2a6c;
+    }
+
+    .vuelo-clase {
+      font-size: 0.8rem;
+      color: #999;
+    }
+
+    .vuelo-precio-container {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .vuelo-precio {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #ffeb00;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .vuelo-precio-nota {
+      font-size: 0.8rem;
+      color: #999;
+    }
+
+    .vuelo-btn {
+      background: linear-gradient(135deg, #1a2a6c 0%, #16213e 100%);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    .vuelo-btn:hover {
+      background: linear-gradient(135deg, #ffeb00 0%, #ffc107 100%);
+      color: #1a2a6c;
+      transform: scale(1.05);
+    }
+
+    .sin-vuelos {
+      text-align: center;
+      padding: 60px 20px;
+      background: #f9f9f9;
+      border-radius: 12px;
+      color: #666;
+    }
+
+    .sin-vuelos h3 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .vuelo-card {
+        grid-template-columns: 1fr;
+      }
+
+      .vuelo-detalles {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .vuelo-precio-container {
+        text-align: left;
+      }
+
+      .vuelos-header h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">VeranoSummer</a>
+      <ul class="nav-links">
+        <li><a href="index.html#destinations">Destinos</a></li>
+        <li><a href="index.html#testimonios">Reseñas</a></li>
+        <li><a href="checkout.html" class="nav-cta">Reservar ahora</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="vuelos-container">
+    <div class="vuelos-header">
+      <h1>Vuelos desde París</h1>
+      <div class="ruta-info">
+        Desde <span>París (CDG)</span> hacia destinos populares
+      </div>
+      <div class="ruta-info">
+        Fecha: <span id="fecha-display">2026-06-25</span>
+      </div>
+    </div>
+
+    <div class="filtros-vuelos">
+      <div class="filtro-grupo">
+        <label>Filtrar por destino</label>
+        <select id="filtro-destino" onchange="aplicarFiltros()">
+          <option value="">Todos los destinos</option>
+          <option value="Barcelona (BCN)">Barcelona</option>
+          <option value="Madrid (MAD)">Madrid</option>
+          <option value="Londres (LHR)">Londres</option>
+          <option value="Nueva York (JFK)">Nueva York</option>
+          <option value="Pekín (PEK)">Pekín</option>
+          <option value="Roma (FCO)">Roma</option>
+          <option value="Tokio (NRT)">Tokio</option>
+          <option value="Santorini (JTR)">Santorini</option>
+          <option value="Frankfurt (FRA)">Frankfurt</option>
+        </select>
+      </div>
+      <div class="filtro-grupo">
+        <label>Precio máximo</label>
+        <input type="range" id="filtro-precio" min="0" max="1200" value="1200" onchange="aplicarFiltros()">
+        <span id="precio-valor">Hasta 1200€</span>
+      </div>
+      <div class="filtro-grupo">
+        <label>Ordenar por</label>
+        <select id="filtro-orden" onchange="aplicarFiltros()">
+          <option value="precio-asc">Precio (menor a mayor)</option>
+          <option value="precio-desc">Precio (mayor a menor)</option>
+          <option value="hora-salida">Hora de salida</option>
+          <option value="duracion">Duración</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="vuelos-lista" id="vuelos-lista">
+      <!-- Los vuelos se cargarán aquí con JavaScript -->
+    </div>
+  </div>
+
+  <script>
+    const vuelosDB = [
+      { destino: 'Barcelona (BCN)', aerolinea: 'Air France', salida: '08:15', llegada: '10:40', duracion: '2h 25m', precio: 135, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Barcelona (BCN)', aerolinea: 'Vueling', salida: '09:45', llegada: '12:10', duracion: '2h 25m', precio: 120, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Barcelona (BCN)', aerolinea: 'Iberia', salida: '11:15', llegada: '13:40', duracion: '2h 25m', precio: 125, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Barcelona (BCN)', aerolinea: 'EasyJet', salida: '13:30', llegada: '15:55', duracion: '2h 25m', precio: 110, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Barcelona (BCN)', aerolinea: 'Air Europa', salida: '15:45', llegada: '18:10', duracion: '2h 25m', precio: 155, clase: 'Business', escala: 'Directa' },
+
+      { destino: 'Madrid (MAD)', aerolinea: 'Air France', salida: '07:30', llegada: '09:50', duracion: '2h 20m', precio: 145, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Madrid (MAD)', aerolinea: 'Iberia', salida: '09:00', llegada: '11:20', duracion: '2h 20m', precio: 140, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Madrid (MAD)', aerolinea: 'Vueling', salida: '10:30', llegada: '12:50', duracion: '2h 20m', precio: 130, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Madrid (MAD)', aerolinea: 'Air Europa', salida: '12:00', llegada: '14:20', duracion: '2h 20m', precio: 160, clase: 'Business', escala: 'Directa' },
+      { destino: 'Madrid (MAD)', aerolinea: 'EasyJet', salida: '14:30', llegada: '16:50', duracion: '2h 20m', precio: 125, clase: 'Turista', escala: 'Directa' },
+
+      { destino: 'Londres (LHR)', aerolinea: 'British Airways', salida: '08:00', llegada: '08:50', duracion: '1h 50m', precio: 120, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Londres (LHR)', aerolinea: 'Air France', salida: '09:30', llegada: '10:20', duracion: '1h 50m', precio: 130, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Londres (LHR)', aerolinea: 'Iberia', salida: '11:15', llegada: '12:05', duracion: '1h 50m', precio: 125, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Londres (LHR)', aerolinea: 'EasyJet', salida: '12:45', llegada: '13:35', duracion: '1h 50m', precio: 100, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Londres (LHR)', aerolinea: 'Air Europa', salida: '14:30', llegada: '15:20', duracion: '1h 50m', precio: 150, clase: 'Business', escala: 'Directa' },
+
+      { destino: 'Nueva York (JFK)', aerolinea: 'Air France', salida: '17:00', llegada: '20:30', duracion: '8h 30m', precio: 620, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Nueva York (JFK)', aerolinea: 'Delta', salida: '18:45', llegada: '22:15', duracion: '8h 30m', precio: 640, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Nueva York (JFK)', aerolinea: 'American Airlines', salida: '20:15', llegada: '23:45', duracion: '8h 30m', precio: 660, clase: 'Business', escala: 'Directa' },
+      { destino: 'Nueva York (JFK)', aerolinea: 'United', salida: '21:50', llegada: '01:20', duracion: '8h 30m', precio: 590, clase: 'Turista', escala: '1 escala' },
+      { destino: 'Nueva York (JFK)', aerolinea: 'Iberia', salida: '23:30', llegada: '03:00', duracion: '8h 30m', precio: 610, clase: 'Turista', escala: '1 escala' },
+
+      { destino: 'Pekín (PEK)', aerolinea: 'Air China', salida: '12:00', llegada: '05:00', duracion: '11h 00m', precio: 750, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Pekín (PEK)', aerolinea: 'Air France', salida: '13:30', llegada: '06:30', duracion: '11h 00m', precio: 760, clase: 'Business', escala: 'Directa' },
+      { destino: 'Pekín (PEK)', aerolinea: 'China Eastern', salida: '15:00', llegada: '08:00', duracion: '11h 00m', precio: 720, clase: 'Turista', escala: '1 escala' },
+      { destino: 'Pekín (PEK)', aerolinea: 'Iberia', salida: '16:45', llegada: '09:45', duracion: '11h 00m', precio: 700, clase: 'Turista', escala: '1 escala' },
+      { destino: 'Pekín (PEK)', aerolinea: 'Vueling', salida: '18:30', llegada: '11:30', duracion: '11h 00m', precio: 670, clase: 'Turista', escala: '2 escalas' },
+
+      { destino: 'Roma (FCO)', aerolinea: 'Air France', salida: '10:00', llegada: '11:45', duracion: '1h 45m', precio: 130, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Roma (FCO)', aerolinea: 'Alitalia', salida: '11:45', llegada: '13:30', duracion: '1h 45m', precio: 140, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Roma (FCO)', aerolinea: 'Iberia', salida: '13:30', llegada: '15:15', duracion: '1h 45m', precio: 125, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Roma (FCO)', aerolinea: 'easyJet', salida: '15:15', llegada: '17:00', duracion: '1h 45m', precio: 115, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Roma (FCO)', aerolinea: 'Air Europa', salida: '17:00', llegada: '18:45', duracion: '1h 45m', precio: 155, clase: 'Business', escala: 'Directa' },
+
+      { destino: 'Tokio (NRT)', aerolinea: 'Air France', salida: '18:00', llegada: '11:00', duracion: '12h 00m', precio: 810, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Tokio (NRT)', aerolinea: 'Japan Airlines', salida: '19:30', llegada: '12:30', duracion: '12h 00m', precio: 830, clase: 'Business', escala: 'Directa' },
+      { destino: 'Tokio (NRT)', aerolinea: 'Delta', salida: '21:00', llegada: '14:00', duracion: '12h 00m', precio: 790, clase: 'Turista', escala: '1 escala' },
+      { destino: 'Tokio (NRT)', aerolinea: 'United', salida: '22:30', llegada: '15:30', duracion: '12h 00m', precio: 770, clase: 'Turista', escala: '1 escala' },
+      { destino: 'Tokio (NRT)', aerolinea: 'Iberia', salida: '00:00', llegada: '17:00', duracion: '12h 00m', precio: 830, clase: 'Business', escala: '1 escala' },
+
+      { destino: 'Santorini (JTR)', aerolinea: 'Air France', salida: '06:30', llegada: '10:50', duracion: '4h 20m', precio: 220, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Santorini (JTR)', aerolinea: 'Vueling', salida: '08:15', llegada: '12:35', duracion: '4h 20m', precio: 205, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Santorini (JTR)', aerolinea: 'Air Europa', salida: '09:45', llegada: '14:05', duracion: '4h 20m', precio: 235, clase: 'Business', escala: 'Directa' },
+      { destino: 'Santorini (JTR)', aerolinea: 'Iberia', salida: '11:30', llegada: '15:50', duracion: '4h 20m', precio: 215, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Santorini (JTR)', aerolinea: 'EasyJet', salida: '13:00', llegada: '17:20', duracion: '4h 20m', precio: 195, clase: 'Turista', escala: '1 escala' },
+
+      { destino: 'Frankfurt (FRA)', aerolinea: 'Lufthansa', salida: '07:15', llegada: '08:55', duracion: '1h 40m', precio: 115, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Frankfurt (FRA)', aerolinea: 'Air France', salida: '08:45', llegada: '10:25', duracion: '1h 40m', precio: 120, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Frankfurt (FRA)', aerolinea: 'Iberia', salida: '10:15', llegada: '11:55', duracion: '1h 40m', precio: 130, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Frankfurt (FRA)', aerolinea: 'EasyJet', salida: '12:00', llegada: '13:40', duracion: '1h 40m', precio: 110, clase: 'Turista', escala: 'Directa' },
+      { destino: 'Frankfurt (FRA)', aerolinea: 'Air Europa', salida: '13:45', llegada: '15:25', duracion: '1h 40m', precio: 145, clase: 'Business', escala: 'Directa' }
+    ];
+
+    let vuelosFiltrados = [];
+
+    function cargarVuelos() {
+      vuelosFiltrados = [...vuelosDB];
+      mostrarVuelos();
+    }
+
+    function aplicarFiltros() {
+      const destinoFiltro = document.getElementById('filtro-destino').value;
+      const precioFiltro = parseInt(document.getElementById('filtro-precio').value);
+      const ordenFiltro = document.getElementById('filtro-orden').value;
+
+      document.getElementById('precio-valor').textContent = `Hasta ${precioFiltro}€`;
+      vuelosFiltrados = [...vuelosDB];
+
+      if (destinoFiltro) {
+        vuelosFiltrados = vuelosFiltrados.filter(v => v.destino === destinoFiltro);
+      }
+      vuelosFiltrados = vuelosFiltrados.filter(v => v.precio <= precioFiltro);
+
+      switch (ordenFiltro) {
+        case 'precio-asc':
+          vuelosFiltrados.sort((a, b) => a.precio - b.precio);
+          break;
+        case 'precio-desc':
+          vuelosFiltrados.sort((a, b) => b.precio - a.precio);
+          break;
+        case 'hora-salida':
+          vuelosFiltrados.sort((a, b) => a.salida.localeCompare(b.salida));
+          break;
+        case 'duracion':
+          vuelosFiltrados.sort((a, b) => {
+            const durA = parseInt(a.duracion);
+            const durB = parseInt(b.duracion);
+            return durA - durB;
+          });
+          break;
+      }
+
+      mostrarVuelos();
+    }
+
+    function mostrarVuelos() {
+      const lista = document.getElementById('vuelos-lista');
+
+      if (vuelosFiltrados.length === 0) {
+        lista.innerHTML = `
+          <div class="sin-vuelos">
+            <h3>No hay vuelos que coincidan con tus filtros</h3>
+            <p>Intenta ajustar los criterios de búsqueda.</p>
+          </div>
+        `;
+        return;
+      }
+
+      lista.innerHTML = vuelosFiltrados.map(vuelo => `
+        <div class="vuelo-card">
+          <div class="vuelo-detalles">
+            <div class="vuelo-aeropuerto">
+              <div class="vuelo-hora">${vuelo.salida}</div>
+              <div class="vuelo-ciudad">París (CDG)</div>
+            </div>
+
+            <div class="vuelo-ruta">
+              <div class="vuelo-ruta-linea"></div>
+              <div class="vuelo-ruta-icon">✈</div>
+              <div class="vuelo-ruta-linea"></div>
+              <div class="vuelo-duracion">${vuelo.duracion}<br>${vuelo.escala}</div>
+            </div>
+
+            <div class="vuelo-aeropuerto">
+              <div class="vuelo-hora">${vuelo.llegada}</div>
+              <div class="vuelo-ciudad">${vuelo.destino}</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 20px; align-items: center;">
+            <div class="vuelo-aerolinea">
+              <div class="vuelo-aerolinea-logo">${vuelo.aerolinea.substring(0, 2)}</div>
+              <div class="vuelo-aerolinea-info">
+                <div class="vuelo-aerolinea-nombre">${vuelo.aerolinea}</div>
+                <div class="vuelo-clase">${vuelo.clase}</div>
+              </div>
+            </div>
+
+            <div class="vuelo-precio-container">
+              <div class="vuelo-precio">${vuelo.precio}€</div>
+              <div class="vuelo-precio-nota">por persona</div>
+              <button class="vuelo-btn" onclick="seleccionarVuelo('${vuelo.aerolinea}', ${vuelo.precio}, '${vuelo.destino}')">Seleccionar</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function seleccionarVuelo(aerolinea, precio, destino) {
+      localStorage.setItem('vueloSeleccionado', JSON.stringify({
+        aerolinea: aerolinea,
+        origen: 'París (CDG)',
+        destino: destino,
+        fecha: new Date().toISOString().split('T')[0],
+        precio: precio
+      }));
+
+      window.location.href = `compra.html?from=París (CDG)&to=${encodeURIComponent(destino)}&precio=${precio}&aerolinea=${encodeURIComponent(aerolinea)}`;
+    }
+
+    window.addEventListener('load', () => {
+      cargarVuelos();
+    });
+  </script>
+</body>
+</html>

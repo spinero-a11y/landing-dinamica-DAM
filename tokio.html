@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buscador de Vuelos - VeranoSummer Tokio</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --primary: #1a2a6c;
+      --accent: #bc002d; /* Rojo Japón */
+      --bg: #f0f2f5;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--bg);
+      margin: 0;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .header-panel {
+      background: linear-gradient(135deg, var(--primary) 0%, #16213e 100%);
+      color: white;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      margin-bottom: 30px;
+    }
+
+    /* Buscador */
+    .search-card {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .search-card label {
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+    }
+
+    select {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #e1e4e8;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-family: inherit;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+      background-size: 15px;
+    }
+
+    /* Lista de Vuelos */
+    .vuelo-item {
+      background: white;
+      margin-bottom: 15px;
+      border-radius: 12px;
+      padding: 20px 30px;
+      display: grid;
+      grid-template-columns: 200px 1fr 180px;
+      align-items: center;
+      transition: all 0.3s ease;
+      border: 1px solid #eee;
+    }
+
+    .vuelo-item:hover {
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      border-color: var(--primary);
+    }
+
+    .airline-box {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo-placeholder {
+      width: 45px;
+      height: 45px;
+      background: #f0f0f0;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: var(--primary);
+      border: 1px solid #ddd;
+    }
+
+    .horarios {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      text-align: center;
+    }
+
+    .hora-txt {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .ruta-line {
+      flex-grow: 0.5;
+      height: 2px;
+      background: #e0e0e0;
+      position: relative;
+    }
+
+    .ruta-line::after {
+      content: '✈';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 0 10px;
+      color: #ccc;
+    }
+
+    .precio-box {
+      text-align: right;
+      border-left: 1px solid #eee;
+      padding-left: 20px;
+    }
+
+    .precio-txt {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #27ae60;
+      display: block;
+    }
+
+    .btn-reservar {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px;
+      background: #fff;
+      border-radius: 15px;
+      color: #888;
+    }
+
+    @media (max-width: 768px) {
+      .vuelo-item { grid-template-columns: 1fr; text-align: center; gap: 20px; }
+      .airline-box { justify-content: center; }
+      .precio-box { border: none; padding: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-panel">
+    <h1 style="margin:0; font-size: 2.5rem;">Explora desde Tokio (NRT)</h1>
+    <p style="opacity: 0.9;">Selecciona tu destino para ver todas las opciones de horarios y aerolíneas</p>
+  </div>
+
+  <div class="search-card">
+    <label>¿Cuál es tu próximo destino?</label>
+    <select id="select-destino" onchange="buscarVuelos()">
+      <option value="">-- Elige una ciudad para ver vuelos disponibles --</option>
+      <option value="Barcelona (BCN)">Barcelona, España</option>
+      <option value="Madrid (MAD)">Madrid, España</option>
+      <option value="Londres (LHR)">Londres, Reino Unido</option>
+      <option value="Nueva York (JFK)">Nueva York, USA</option>
+      <option value="Pekín (PEK)">Pekín, China</option>
+      <option value="París (CDG)">París, Francia</option>
+      <option value="Roma (FCO)">Roma, Italia</option>
+      <option value="Santorini (JTR)">Santorini, Grecia</option>
+      <option value="Frankfurt (FRA)">Frankfurt, Alemania</option>
+    </select>
+  </div>
+
+  <div id="contenedor-vuelos">
+    <div class="empty-state">
+      <h3>Esperando selección...</h3>
+      <p>Elige un destino arriba para rastrear los horarios disponibles.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // BASE DE DATOS ORIGINAL (Manteniendo todos tus datos de aerolíneas y horas)
+  const vuelosDB = [
+    { destino: 'Barcelona (BCN)', aerolinea: 'Japan Airlines', salida: '08:00', llegada: '16:00', duracion: '12h 00m', precio: 820, clase: 'Turista', escala: 'Directa' },
+    { destino: 'Barcelona (BCN)', aerolinea: 'ANA', salida: '09:30', llegada: '17:30', duracion: '12h 00m', precio: 840, clase: 'Business', escala: 'Directa' },
+    { destino: 'Barcelona (BCN)', aerolinea: 'Air France', salida: '11:00', llegada: '19:00', duracion: '12h 00m', precio: 780, clase: 'Turista', escala: '1 escala' },
+    { destino: 'Barcelona (BCN)', aerolinea: 'Air Europa', salida: '12:30', llegada: '20:30', duracion: '12h 00m', precio: 860, clase: 'Turista', escala: '1 escala' },
+    { destino: 'Barcelona (BCN)', aerolinea: 'Iberia', salida: '14:00', llegada: '22:00', duracion: '12h 00m', precio: 800, clase: 'Turista', escala: '2 escalas' },
+    { destino: 'Madrid (MAD)', aerolinea: 'Japan Airlines', salida: '08:30', llegada: '16:30', duracion: '12h 00m', precio: 830, clase: 'Turista', escala: 'Directa' },
+    { destino: 'Madrid (MAD)', aerolinea: 'ANA', salida: '10:00', llegada: '18:00', duracion: '12h 00m', precio: 850, clase: 'Business', escala: 'Directa' },
+    { destino: 'Madrid (MAD)', aerolinea: 'Iberia', salida: '11:30', llegada: '19:30', duracion: '12h 00m', precio: 790, clase: 'Turista', escala: '1 escala' },
+    { destino: 'Madrid (MAD)', aerolinea: 'Air Europa', salida: '13:00', llegada: '21:00', duracion: '12h 00m', precio: 810, clase: 'Business', escala: '1 escala' },
+    { destino: 'Madrid (MAD)', aerolinea: 'Iberia', salida: '14:30', llegada: '22:30', duracion: '12h 00m', precio: 820, clase: 'Turista', escala: '2 escalas' },
+    { destino: 'Londres (LHR)', aerolinea: 'British Airways', salida: '06:00', llegada: '11:30', duracion: '11h 30m', precio: 760, clase: 'Turista', escala: 'Directa' },
+    { destino: 'Londres (LHR)', aerolinea: 'Japan Airlines', salida: '07:30', llegada: '13:00', duracion: '11h 30m', precio: 780, clase: 'Turista', escala: 'Directa' },
+    { destino: 'Londres (LHR)', aerolinea: 'ANA', salida: '09:00', llegada: '14:30', duracion: '11h 30m', precio: 740, clase: 'Turista', escala: '1 escala' },
+    { destino: 'Londres (LHR)', aerolinea: 'Air France', salida: '10:30', llegada: '16:00', duracion: '11h 30m', precio: 790, clase: 'Business', escala: '1 escala' },
+    { destino: 'Londres (LHR)', aerolinea: 'Iberia', salida: '12:00', llegada: '17:30', duracion: '11h 30m', precio: 770, clase: 'Turista', escala: '2 escalas' },
+    { destino: 'Nueva York (JFK)', aerolinea: 'Japan Airlines', salida: '15:00', llegada: '14:30', duracion: '11h 30m', precio: 900, clase: 'Turista', escala: 'Directa' },
+    { destino: 'Nueva York (JFK)', aerolinea: 'ANA', salida: '16:30', llegada: '16:00', duracion: '11h 30m', precio: 920, clase: 'Business', escala: 'Directa' },
+    { destino: 'Nueva York (JFK)', aerolinea: 'Delta', salida: '18:00', llegada: '17:30', duracion: '11h 30m', precio: 880, clase: 'Turista', escala: '1 escala' },
+    { destino: 'Nueva York (JFK)', aerolinea: 'United', salida: '19:30', llegada: '19:00', duracion: '11h 30m', precio: 860, clase: 'Turista', escala: '1 escala' },
+    { destino: 'Nueva York (JFK)', aerolinea: 'Air France', salida: '21:00', llegada: '20:30', duracion: '11h 30m', precio: 890, clase: 'Business', escala: '1 escala' },
+    { destino: 'Pekín (PEK)', aerolinea: 'Japan Airlines', salida: '08:45', llegada: '11:45', duracion: '3h 00m', precio: 210, clase: 'Turista', escala: 'Directa' },
+    { destino: 'Pekín (PEK)', aerolinea: 'Air China', salida: '10:15', llegada: '13:15', duracion: '3h 00m', precio: 220, clase: 'Turista', escala: 'Directa' },
+    { destino: 'Pekín (PEK)', aerolinea: 'ANA', salida: '11:45', llegada: '14:45', duracion: '3h 00m', precio: 205, clase: 'Turista', escala: 'Directa' },
+    { destino: 'Pekín (PEK)', aerolinea: 'Air Europa', salida: '13:15', llegada: '16:15', duracion: '3h 00m', precio: 240, clase: 'Business', escala: 'Directa' },
+    { destino: 'Pekín (PEK)', aerolinea: 'Iberia', salida: '14:45', llegada: '17:45', duracion: '3h 00m', precio: 230, clase: 'Turista', escala: '1 escala' },
+    { destino: 'París (CDG)', aerolinea: 'Air France', salida: '07:00', llegada: '14:30', duracion: '11h 30m', precio: 810, clase: 'Turista', escala: 'Directa' },
+    { destino: 'París (CDG)', aerolinea: 'Japan Airlines', salida: '08:30', llegada: '16:00', duracion: '11h 30m', precio: 830, clase: 'Business', escala: 'Directa' },
+    { destino: 'París (CDG)', aerolinea: 'ANA', salida: '10:00', llegada: '17:30', duracion: '11h 30m', precio: 790, clase: 'Turista', escala: '1 escala' },
+    { destino: 'París (CDG)', aerolinea: 'Delta', salida: '11:30', llegada: '19:00', duracion: '11h 30m', precio: 800, clase: 'Turista', escala: '1 escala' },
+    { destino: 'París (CDG)', aerolinea: 'Iberia', salida: '13:00', llegada: '20:30', duracion: '11h 30m', precio: 820, clase: 'Business', escala: '1 escala' },
+    { destino: 'Roma (FCO)', aerolinea: 'Alitalia', salida: '06:30', llegada: '12:45', duracion: '11h 15m', precio: 780, clase: 'Turista', escala: 'Directa' },
+    { destino: 'Roma (FCO)', aerolinea: 'Japan Airlines', salida: '08:00', llegada: '14:15', duracion: '11h 15m', precio: 800, clase: 'Business', escala: 'Directa' },
+    { destino: 'Roma (FCO)', aerolinea: 'Air France', salida: '09:30', llegada: '15:45', duracion: '11h 15m', precio: 760, clase: 'Turista', escala: '1 escala' },
+    { destino: 'Roma (FCO)', aerolinea: 'Iberia', salida: '11:00', llegada: '17:15', duracion: '11h 15m', precio: 770, clase: 'Turista', escala: '1 escala' },
+    { destino: 'Roma (FCO)', aerolinea: 'Air Europa', salida: '12:30', llegada: '18:45', duracion: '11h 15m', precio: 790, clase: 'Business', escala: '1 escala' },
+    { destino: 'Santorini (JTR)', aerolinea: 'Japan Airlines', salida: '07:45', llegada: '14:00', duracion: '11h 15m', precio: 790, clase: 'Turista', escala: '1 escala' },
+    { destino: 'Santorini (JTR)', aerolinea: 'ANA', salida: '09:15', llegada: '15:30', duracion: '11h 15m', precio: 780, clase: 'Turista', escala: '1 escala' },
+    { destino: 'Santorini (JTR)', aerolinea: 'Air France', salida: '10:45', llegada: '17:00', duracion: '11h 15m', precio: 770, clase: 'Turista', escala: '1 escala' },
+    { destino: 'Santorini (JTR)', aerolinea: 'Iberia', salida: '12:15', llegada: '18:30', duracion: '11h 15m', precio: 800, clase: 'Business', escala: '1 escala' },
+    { destino: 'Santorini (JTR)', aerolinea: 'Air Europa', salida: '13:45', llegada: '20:00', duracion: '11h 15m', precio: 820, clase: 'Turista', escala: '2 escalas' },
+    { destino: 'Frankfurt (FRA)', aerolinea: 'Lufthansa', salida: '07:30', llegada: '13:15', duracion: '11h 45m', precio: 770, clase: 'Turista', escala: 'Directa' },
+    { destino: 'Frankfurt (FRA)', aerolinea: 'All Nippon Airways', salida: '09:00', llegada: '14:45', duracion: '11h 45m', precio: 790, clase: 'Turista', escala: 'Directa' },
+    { destino: 'Frankfurt (FRA)', aerolinea: 'Air France', salida: '10:30', llegada: '16:15', duracion: '11h 45m', precio: 760, clase: 'Turista', escala: '1 escala' },
+    { destino: 'Frankfurt (FRA)', aerolinea: 'Iberia', salida: '12:00', llegada: '17:45', duracion: '11h 45m', precio: 780, clase: 'Turista', escala: '1 escala' },
+    { destino: 'Frankfurt (FRA)', aerolinea: 'KLM', salida: '13:30', llegada: '19:15', duracion: '11h 45m', precio: 800, clase: 'Business', escala: '1 escala' }
+  ];
+
+  function buscarVuelos() {
+    const destinoSeleccionado = document.getElementById('select-destino').value;
+    const contenedor = document.getElementById('contenedor-vuelos');
+
+    if (!destinoSeleccionado) {
+      contenedor.innerHTML = '<div class="empty-state"><h3>Esperando selección...</h3><p>Elige un destino arriba para rastrear los horarios disponibles.</p></div>';
+      return;
+    }
+
+    // Filtramos TODOS los vuelos que coincidan con el destino
+    const resultados = vuelosDB.filter(v => v.destino === destinoSeleccionado);
+
+    if (resultados.length === 0) {
+      contenedor.innerHTML = '<div class="empty-state"><h3>Sin disponibilidad</h3><p>Lo sentimos, no hay vuelos registrados para este destino.</p></div>';
+      return;
+    }
+
+    // Renderizamos cada vuelo encontrado (múltiples aerolíneas y múltiples horarios)
+    contenedor.innerHTML = resultados.map(v => `
+      <div class="vuelo-item">
+        <div class="airline-box">
+          <div class="logo-placeholder">${v.aerolinea.substring(0,2).toUpperCase()}</div>
+          <div>
+            <div style="font-weight: bold; font-size: 1rem;">${v.aerolinea}</div>
+            <div style="font-size: 0.8rem; color: #888;">${v.clase}</div>
+          </div>
+        </div>
+
+        <div class="horarios">
+          <div style="text-align: right">
+            <div class="hora-txt">${v.salida}</div>
+            <div style="font-size: 0.8rem; font-weight: bold; color: #888;">NRT</div>
+          </div>
+          
+          <div class="ruta-line"></div>
+          
+          <div style="text-align: left">
+            <div class="hora-txt">${v.llegada}</div>
+            <div style="font-size: 0.8rem; font-weight: bold; color: #888;">${v.destino.split(' ')[1].replace('(','').replace(')','')}</div>
+          </div>
+        </div>
+
+        <div class="precio-box">
+          <span style="font-size: 0.8rem; color: #888; font-weight: bold;">PRECIO FINAL</span>
+          <span class="precio-txt">${v.precio}€</span>
+          <button class="btn-reservar">Seleccionar</button>
+          <div style="font-size: 0.7rem; color: #aaa; margin-top: 5px;">${v.escala}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+</script>
+
+</body>
+</html>
